@@ -1,8 +1,38 @@
-<form action="{% url 'resorthub:userinfo' %}" method="post"> 
+<form role="form" action="{% url 'resorthub:userinfo' %}" method="post"> 
 {% csrf_token %}
-    <label for="address">Address</label>
-    <input type="text" name="address" id="address"/>
-    <label for="date">Date</label>
-    <input type="date" name="date" id="date"/>
+    {{ form }}
 <input type="submit" value="Update"/>
 </form>
+
+{% if supported_resorts %}
+    <p> We currently support the following resorts: </p>
+    
+    <table>
+      <tr>
+        <th>Resort</th>
+        <th>Address</th>
+        <th>Distance</th>
+        <th>Current snow (in)</th>
+      </tr>
+      {% for resort in supported_resorts %}
+        <tr>
+            <td class="name">{{ resort.resort_name  }}</td>
+            <td class="address">{{ resort.resort_address }}</td>
+            <td class="dist">N/A</td>
+            <td class="snow">N/A</td>
+        </tr>
+      {% endfor %}
+    </table>            
+
+    <p> And more are on the way! </p> 
+{% else %}
+    <p>We currently don't support any resorts. Sadness!</p>
+
+{% endif %}
+
+{% if input_flag %}
+   <p> You will start at address {{ address }} and ski on {{ date }}.</p>
+{% else %}
+   <p> Please put in your starting address and what day you want to ski. </p>
+
+{% endif %}
