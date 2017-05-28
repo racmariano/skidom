@@ -2,13 +2,13 @@
 from __future__ import unicode_literals
 
 from django.shortcuts import render
-<<<<<<< HEAD
 
 # Create your views here.
-=======
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
+from django.urls import reverse
 
 def index(request):
-    return HttpResponse("Hello, skiing world")
+    return render(request, 'resorthub/index.html', {})
 
->>>>>>> 86137960a9e8920087d8b0b16883e96d00eea37c
+def userinfo(request):
+    return HttpResponseRedirect(reverse('resorthub:index'))
