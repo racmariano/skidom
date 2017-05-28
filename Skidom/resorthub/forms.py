@@ -8,3 +8,5 @@ class UserAddressForm(forms.Form):
     """
     user_address = forms.CharField(label = "Starting address", max_length = 200)
     search_date = forms.DateField(widget = forms.SelectDateWidget, label = "Date", initial = datetime.date.today)
+    maxx_pass_only = forms.BooleanField(label = "Show only MAXX Pass resorts?") 
+

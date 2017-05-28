@@ -9,6 +9,7 @@ class Resort(models.Model):
     lift_ticket_price = models.DecimalField(max_digits = 5, decimal_places = 2)
     rental_price = models.DecimalField(max_digits = 5, decimal_places = 2)
     season_begins = models.DateField(auto_now = True)
+    maxx_pass = models.BooleanField(default = True) 
 
     def __str__(self):
         return self.resort_name
