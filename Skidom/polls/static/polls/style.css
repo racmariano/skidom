@@ -1,0 +1,13 @@
+li a {
+    color: red;
+}
+
+body {
+    background: white url("images/skibg.png")
+    no-repeat right bottom;
+}
+
+.boxed {
+    background-color: white;
+    border: 2px double blue ;
+}
