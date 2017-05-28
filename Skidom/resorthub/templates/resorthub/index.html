@@ -1,3 +1,5 @@
+{% load resort_filters %}
+
 <form action="{% url 'resorthub:index' %}" method="post"> 
 {% csrf_token %}
     {{ form }}
@@ -25,7 +27,13 @@
         <tr>
             <td class="name">{{ resort.resort_name  }}</td>
             <td class="address">{{ resort.resort_address }}</td>
-            <td class="dist">N/A</td>
+ 
+            {% if distances %}
+                <td class="dist">{{ distances|use_index:forloop.counter0  }}</td>
+            {% else %}         
+                <td class="dist">N/A</td>
+            {% endif %}
+
             <td class="snow">N/A</td>
         </tr>
       {% endfor %}
