@@ -1,8 +1,15 @@
-<form role="form" action="{% url 'resorthub:userinfo' %}" method="post"> 
+<form action="{% url 'resorthub:index' %}" method="post"> 
 {% csrf_token %}
     {{ form }}
 <input type="submit" value="Update"/>
 </form>
+
+{% if input_flag %}
+   <p> You will start at address {{ address }} and ski on {{ date }}.</p>
+{% else %}
+   <p> Please put in your starting address and what day you want to ski. </p>
+
+{% endif %}
 
 {% if supported_resorts %}
     <p> We currently support the following resorts: </p>
@@ -30,9 +37,3 @@
 
 {% endif %}
 
-{% if input_flag %}
-   <p> You will start at address {{ address }} and ski on {{ date }}.</p>
-{% else %}
-   <p> Please put in your starting address and what day you want to ski. </p>
-
-{% endif %}
