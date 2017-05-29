@@ -15,38 +15,41 @@ from .forms import UserAddressForm
 gmaps = googlemaps.Client(key='AIzaSyBRrCgnGFkdRY-Z1hX6xaxoUFBczNI2664')
 
 def index(request): 
-    resortlist = Resort.objects.order_by('resort_name')
+    resort_list = Resort.objects.order_by('name')
 
     if request.method == 'POST':
         form = UserAddressForm(request.POST)
 
         if form.is_valid():
-            form_dict = process_form(request, form, resortlist)
+            form_dict = process_form(request, form, resort_list)
             return render(request, 'resorthub/index.html', form_dict)
 
         else:
-            return render(request, 'resorthub/index.html', {'form': form, 'supported_resorts': resortlist})
+            return render(request, 'resorthub/index.html', {'form': form, 'supported_resorts': resort_list})
 
     else:
         form = UserAddressForm() 
-        return render(request, 'resorthub/index.html', {'form': form, 'supported_resorts': resortlist})
+        return render(request, 'resorthub/index.html', {'form': form, 'supported_resorts': resort_list})
 
 
-def process_form(request, form, resortlist):
+def process_form(request, form, resort_list):
     address = form.cleaned_data['user_address']
     date = form.cleaned_data['search_date']
-    passinfo = form.cleaned_data['pass_info'][0]
+    pass_info = form.cleaned_data['pass_info'][0]
             
-    resortlist = Resort.objects.filter(available_passes__contains=passinfo).order_by('resort_name')
+    filtered_resort_list = Resort.objects.filter(available_passes__contains=pass_info).order_by('name')
 
-    resort_addresses = [x.resort_address.raw for x in resortlist] 
+    if not filtered_resort_list:
+        return({'no_match': 1, 'form': form, 'supported_resorts': resort_list})
+
+    resort_addresses = [x.address.raw for x in filtered_resort_list] 
 
     clean_dists, clean_times = use_googlemaps(address, resort_addresses)
 
     if not clean_dists:
-        return({'invalid_address': 1, 'form': form, 'supported_resorts': resortlist})
+        return({'invalid_address': 1, 'form': form, 'supported_resorts': resort_list})
 
-    return({'form': form, 'address': address, 'date': date, 'supported_resorts': resortlist, 'distances': clean_dists, 'times': clean_times})
+    return({'form': form, 'address': address, 'date': date, 'supported_resorts': filtered_resort_list, 'distances': clean_dists, 'times': clean_times})
 
 
 def use_googlemaps(address, resort_addresses):
