@@ -6,10 +6,15 @@
 <input type="submit" value="Update"/>
 </form>
 
-{% if input_flag %}
+{% if invalid_address %}
+<p> Please enter a valid address! </p>
+{% endif %}
+
+
+{% if address %}
    <p> You will start at address {{ address }} and ski on {{ date }}.</p>
 {% else %}
-   <p> Please put in your starting address and what day you want to ski. </p>
+   <p> Please put in a starting address and what day you want to ski. </p>
 
 {% endif %}
 
@@ -21,6 +26,7 @@
         <th>Resort</th>
         <th>Address</th>
         <th>Distance</th>
+        <th>Travel time</th>
         <th>Current snow (in)</th>
       </tr>
       {% for resort in supported_resorts %}
@@ -30,8 +36,10 @@
  
             {% if distances %}
                 <td class="dist">{{ distances|use_index:forloop.counter0  }}</td>
+                <td class="time">{{ times|use_index:forloop.counter0 }}</td>
             {% else %}         
                 <td class="dist">N/A</td>
+                <td class="time">N/A</td>
             {% endif %}
 
             <td class="snow">N/A</td>
