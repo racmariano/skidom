@@ -14,7 +14,6 @@ from .forms import UserAddressForm
 
 gmaps = googlemaps.Client(key='AIzaSyBRrCgnGFkdRY-Z1hX6xaxoUFBczNI2664')
 
-
 def index(request): 
     resortlist = Resort.objects.order_by('resort_name')
 
@@ -36,19 +35,18 @@ def index(request):
 def process_form(request, form, resortlist):
     address = form.cleaned_data['user_address']
     date = form.cleaned_data['search_date']
-    maxx_only = form.cleaned_data['maxx_pass_only']
+    passinfo = form.cleaned_data['pass_info'][0]
             
-    if maxx_only:  
-        resortlist = Resort.objects.filter(maxx_pass=True).order_by('resort_name')
+    resortlist = Resort.objects.filter(available_passes__contains=passinfo).order_by('resort_name')
 
-    resort_addresses = [x.resort_address for x in resortlist] 
+    resort_addresses = [x.resort_address.raw for x in resortlist] 
 
     clean_dists, clean_times = use_googlemaps(address, resort_addresses)
 
     if not clean_dists:
-        return({'invalid_address': 1, 'form': form, 'supported_resorts': resortlist, 'maxx_only': maxx_only})
+        return({'invalid_address': 1, 'form': form, 'supported_resorts': resortlist})
 
-    return({'form': form, 'address': address, 'date': date, 'supported_resorts': resortlist, 'maxx_only': maxx_only,  'distances': clean_dists, 'times': clean_times})
+    return({'form': form, 'address': address, 'date': date, 'supported_resorts': resortlist, 'distances': clean_dists, 'times': clean_times})
 
 
 def use_googlemaps(address, resort_addresses):
