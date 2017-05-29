@@ -43,7 +43,6 @@ def process_form(request, form, resort_list):
         return({'no_match': 1, 'form': form, 'supported_resorts': resort_list})
 
     resort_addresses = [x.address.raw for x in filtered_resort_list] 
-
     clean_dists, clean_times = use_googlemaps(address, resort_addresses)
 
     if not clean_dists:

@@ -34,8 +34,8 @@
       </tr>
       {% for resort in supported_resorts %}
         <tr>
-            <td class="name">{{ resort.resort_name  }}</td>
-            <td class="address">{{ resort.resort_address }}</td>
+            <td class="name">{{ resort.name  }}</td>
+            <td class="address">{{ resort.address }}</td>
  
             {% if distances %}
                 <td class="dist">{{ distances|use_index:forloop.counter0  }}</td>
