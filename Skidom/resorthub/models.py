@@ -19,7 +19,6 @@ class Resort(models.Model):
 
     # Season information
     season_begins = models.DateField(auto_now = True)
-    maxx_pass = models.BooleanField(default = True) 
 
     # Pass information
     PASS_CHOICES = (("NON", "None"),
