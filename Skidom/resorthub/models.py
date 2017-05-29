@@ -10,8 +10,8 @@ from django.db import models
 class Resort(models.Model):
 
     # Basic resort information
-    resort_name = models.CharField(max_length=200, default = "")
-    resort_address = AddressField(blank = True)
+    name = models.CharField(max_length=200, default = "")
+    address = AddressField(blank = True)
 
     # Prices for lift and rentals
     lift_ticket_price = models.DecimalField(max_digits = 6, decimal_places = 2, default = 100.00)
@@ -45,4 +45,4 @@ class Resort(models.Model):
     ten_day_snowfall = models.DecimalField(max_digits = 3, decimal_places = 1, default = 0)
 
     def __str__(self):
-        return self.resort_name
+        return self.name

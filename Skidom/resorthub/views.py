@@ -15,7 +15,7 @@ from .forms import UserAddressForm
 gmaps = googlemaps.Client(key='AIzaSyBRrCgnGFkdRY-Z1hX6xaxoUFBczNI2664')
 
 def index(request): 
-    resortlist = Resort.objects.order_by('resort_name')
+    resortlist = Resort.objects.order_by('name')
 
     if request.method == 'POST':
         form = UserAddressForm(request.POST)
@@ -37,9 +37,9 @@ def process_form(request, form, resortlist):
     date = form.cleaned_data['search_date']
     passinfo = form.cleaned_data['pass_info'][0]
             
-    resortlist = Resort.objects.filter(available_passes__contains=passinfo).order_by('resort_name')
+    resortlist = Resort.objects.filter(available_passes__contains=passinfo).order_by('name')
 
-    resort_addresses = [x.resort_address.raw for x in resortlist] 
+    resort_addresses = [x.address.raw for x in resortlist] 
 
     clean_dists, clean_times = use_googlemaps(address, resort_addresses)
 

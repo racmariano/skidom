@@ -8,20 +8,21 @@ class Command(BaseCommand):
     help = 'Updates the snow forecast for the resort'
 
     def handle(self, *args, **options):
-        resort = Resort.objects.get(resort_name="Okemo")
-        self.update_snow_forecast(resort)
+        resorts = Resort.objects.all()
+        for resort in resorts:
+            self.update_snow_forecast(resort)
         
     def update_snow_forecast(self, resort):
-        state = 'Norway'
-        city = 'Narvik'
-        snow_forecast = self.get_snow_forecast(state, city)
+        locality = resort.address.locality.name
+        state = resort.address.locality.state.name
+        snow_forecast = self.get_snow_forecast(state, locality)
         num_to_string = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"]
         for day, snowfall in enumerate(snow_forecast):
             setattr(resort, num_to_string[day] + '_day_snowfall', snowfall)
         resort.save()
 
-    def get_snow_forecast(self, state, city):
-        f = urllib2.urlopen('http://api.wunderground.com/api/9c5a6634ac283749/forecast10day/q/' + state + '/' + city + '.json')
+    def get_snow_forecast(self, state, locality):
+        f = urllib2.urlopen('http://api.wunderground.com/api/9c5a6634ac283749/forecast10day/q/' + state + '/' + locality + '.json')
 
         json_string = f.read()
         parsed_json = json.loads(json_string)
