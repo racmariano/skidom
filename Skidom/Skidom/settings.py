@@ -87,6 +87,9 @@ DATABASES = {
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
+AUTH_USER_MODEL = 'resorthub.UserProfile'
+
+AUTH_PROFILE_MODULE = 'resorthub.UserProfile'
 
 AUTH_PASSWORD_VALIDATORS = [
     {

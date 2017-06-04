@@ -5,6 +5,19 @@ from multiselectfield import MultiSelectField
 from address.models import AddressField
 
 from django.db import models
+from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+PASS_CHOICES = (("NON", "None"),
+                ("EPI", "Epic Pass"),
+                ("MAX", "Max Pass"),
+                ("MOC", "Mountain Collective Pass"),
+                ("NEP", "New England Pass"),
+                ("PEA", "Peak Pass"),
+                ("POW", "Powder Alliance Pass"),
+                ("ROC", "Rocky Mountain Super Pass"))
 
 # Basic resort model
 class Resort(models.Model):
@@ -21,15 +34,6 @@ class Resort(models.Model):
     season_begins = models.DateField(auto_now = True)
 
     # Pass information
-    PASS_CHOICES = (("NON", "None"),
-                    ("EPI", "Epic Pass"),
-                    ("MAX", "Max Pass"),
-                    ("MOC", "Mountain Collective Pass"),
-                    ("NEP", "New England Pass"),
-                    ("PEA", "Peak Pass"),
-                    ("POW", "Powder Alliance Pass"),
-                    ("ROC", "Rocky Mountain Super Pass"))
-
     available_passes = MultiSelectField(choices = PASS_CHOICES, default = "NON")
 
     # Snow predictions
@@ -46,3 +50,19 @@ class Resort(models.Model):
 
     def __str__(self):
         return self.name
+
+
+# User model
+class UserProfile(AbstractUser):
+    address = AddressField(null = True, blank = True)
+
+    RUN_CHOICES = (("BE", "Beginner"),
+                     ("IN", "Intermediate"),
+                     ("EX", "Expert"),
+                     ("TE", "Freestyle"),
+                     ("GL", "Glades"))
+        
+    favorite_runs = MultiSelectField(choices = RUN_CHOICES, default = "BE")
+    pass_type = models.CharField(max_length = 20, choices = PASS_CHOICES, default = "NON")
+    own_equipment = models.BooleanField(default = False) 
+

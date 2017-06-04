@@ -1,19 +1,57 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.shortcuts import render
+#General imports
+from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.views import generic, View
+from django.contrib import messages  
 
+#Libraries for user support
+from django.contrib.auth import login, authenticate
+from django.contrib.auth.forms import UserCreationForm
+
+#Libraries for distancce/time estimates
 import googlemaps
 import json
 
+#Import Objects
 from .models import Resort
-from .forms import UserAddressForm
+from .forms import UserAddressForm, CustomUserCreationForm
 
+#Global variables
 gmaps = googlemaps.Client(key='AIzaSyBRrCgnGFkdRY-Z1hX6xaxoUFBczNI2664')
 
+
+
+#USER CREATION METHODS!!!
+#This code was copied and then modified from the website simpleisbetterthancomplex
+
+def signup(request):
+    if request.method == 'POST':
+        form = CustomUserCreationForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data['username']
+            raw_password = form.cleaned_data['password1']
+            user = authenticate(username = username, password = raw_password)
+            login(request, user)
+            messages.success(request, "Awesome! Thank you so much for making an account!")
+            return redirect("/resorthub/", )
+
+        else:
+            messages.warning(request, 'There has been an error. Please try again!')
+            return redirect("/resorthub/signup", ) 
+
+    else:
+        user_form = CustomUserCreationForm()
+        return render(request, 'resorthub/signup.html', {'user_form': user_form })
+
+
+
+#RESORT HUB METHODS!!!!
 def index(request): 
     resort_list = Resort.objects.order_by('name')
 

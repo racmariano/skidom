@@ -1,5 +1,13 @@
 {% load resort_filters %}
 
+{% if messages %}
+  <ul class="messages">
+  {% for message in messages %}
+      <li> {{ message }} </li>
+  {% endfor %}
+  </ul>
+{% endif %}
+
 <form action="{% url 'resorthub:index' %}" method="post"> 
 {% csrf_token %}
     {{ form }}

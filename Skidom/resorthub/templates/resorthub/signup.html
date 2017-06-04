@@ -1,0 +1,20 @@
+<h2>Skidom: Make new account</h2>
+
+{% if messages %}
+  <ul class="messages">
+  {% for message in messages %}
+      <li> {{ message }} </li>
+  {% endfor %}
+  </ul>
+{% endif %} 
+
+<p>By making a new account, you can save your preferences and have faster
+access to our recommended resorts! It'll get you on the snow faster! </p>
+
+<form method="post">
+  {% csrf_token %}
+  {{ user_form.as_p }}
+  <button type="submit">Make new account</button>
+</form>
+
+
