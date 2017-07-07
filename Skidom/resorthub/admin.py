@@ -7,6 +7,8 @@ from django.contrib.auth.admin import UserAdmin
 
 from .models import Resort
 from .models import UserProfile
+from .models import TrailPage
 
 admin.site.register(Resort)
-admin.site.register(UserProfile)    
+admin.site.register(UserProfile)  
+admin.site.register(TrailPage)  

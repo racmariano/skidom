@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'polls.apps.PollsConfig',
     'resorthub.apps.ResorthubConfig',
     'multiselectfield',
-    'address'
+    'address',
+    'dynamic_scraper'
 ]
 
 MIDDLEWARE = [

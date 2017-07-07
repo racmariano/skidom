@@ -10,6 +10,9 @@ from django.contrib.auth.models import AbstractUser
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
+from dynamic_scraper.models import Scraper, SchedulerRuntime
+from scrapy_djangoitem import DjangoItem
+
 PASS_CHOICES = (("NON", "None"),
                 ("EPI", "Epic Pass"),
                 ("MAX", "Max Pass"),
@@ -25,6 +28,7 @@ class Resort(models.Model):
     # Basic resort information
     name = models.CharField(max_length=200, default = "")
     address = AddressField(blank = True)
+    web_home = models.URLField(default = '')
 
     # Prices for lift and rentals
     lift_ticket_price = models.DecimalField(max_digits = 6, decimal_places = 2, default = 100.00)
@@ -48,9 +52,42 @@ class Resort(models.Model):
     nine_day_snowfall = models.DecimalField(max_digits = 3, decimal_places = 1, default = 0)
     ten_day_snowfall = models.DecimalField(max_digits = 3, decimal_places = 1, default = 0)
 
+    # Slope information
+    num_slopes = models.IntegerField(default = 0)
+    num_green = models.IntegerField(default = 0)
+    num_blue = models.IntegerField(default = 0)
+    num_black = models.IntegerField(default = 0)
+
+    # To mine num_open information from trail info page (url refers to trail info page) 
+    url = models.URLField(blank=True)
+    scraper = models.ForeignKey(Scraper, blank = True, null = True, on_delete = models.SET_NULL)
+    scraper_runtime = models.ForeignKey(SchedulerRuntime, blank = True, null = True, on_delete = models.SET_NULL)
+
     def __str__(self):
         return self.name
 
+# Ski website model for scraping
+class TrailPage(models.Model):
+    resort = models.ForeignKey(Resort, null = True, default=4)
+    url = models.URLField(blank=True)
+
+    num_open = models.IntegerField(default = 999)
+    base_temp = models.DecimalField(max_digits = 3, decimal_places = 1, default = 0)
+    summit_temp = models.DecimalField(max_digits = 3, decimal_places = 1, default = 0)
+    new_snow =  models.CharField(default = "", max_length = 100)
+
+    checker_runtime = models.ForeignKey(SchedulerRuntime, blank = True, null = True, on_delete = models.SET_NULL)
+
+    def __init__(self, *args, **kwargs):
+        super(TrailPage, self).__init__(*args, **kwargs)
+        if not self.id:
+            self.url = self.resort.url
+
+    def __unicode__(self):
+        return self.url
+
+class TrailPageItem(DjangoItem):
+    django_model = TrailPage
 
 # User model
 class UserProfile(AbstractUser):
