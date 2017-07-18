@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 #General imports
+import re
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
@@ -49,6 +50,9 @@ def signup(request):
         user_form = CustomUserCreationForm()
         return render(request, 'resorthub/signup.html', {'user_form': user_form })
 
+def resort_listing(request):
+    resort_list = Resort.objects.order_by('name')
+    return render(request, 'resorthub/resorts.html', {'resorts': resort_list})
 
 
 #RESORT HUB METHODS!!!!
@@ -74,6 +78,7 @@ def process_form(request, form, resort_list):
     address = form.cleaned_data['user_address']
     date = form.cleaned_data['search_date']
     pass_info = form.cleaned_data['pass_info'][0]
+    sort_opt = form.cleaned_data['sort_opt']
             
     filtered_resort_list = Resort.objects.filter(available_passes__contains=pass_info).order_by('name')
 
@@ -86,7 +91,11 @@ def process_form(request, form, resort_list):
     if not clean_dists:
         return({'invalid_address': 1, 'form': form, 'supported_resorts': resort_list})
 
-    return({'form': form, 'address': address, 'date': date, 'supported_resorts': filtered_resort_list, 'distances': clean_dists, 'times': clean_times})
+    ordered_resort_info = order_resorts(sort_opt, filtered_resort_list, clean_dists, clean_times)
+    ordered_resorts, ordered_dists, ordered_times = zip(*ordered_resort_info)
+
+    return({'form': form, 'address': address, 'date': date, 'supported_resorts': ordered_resorts, 'distances': ordered_dists, 'times': ordered_times})
+
 
 
 def use_googlemaps(address, resort_addresses):
@@ -98,10 +107,59 @@ def use_googlemaps(address, resort_addresses):
 
     try: 
         for i in range(0, len(resort_addresses)):
-            clean_map_dists.append(json_map_dists['rows'][0]['elements'][i]['distance']['text']) 
+            
+            dist = json_map_dists['rows'][0]['elements'][i]['distance']['text'][:-3].replace(',', '')
+            clean_map_dists.append(float(dist)) 
             clean_map_times.append(json_map_dists['rows'][0]['elements'][i]['duration']['text']) 
     
     except KeyError:
          return([], [])
 
-    return(clean_map_dists, clean_map_times) 
+    return(clean_map_dists, clean_map_times)
+
+def order_resorts(sort_opt, filtered_resort_list, clean_dists, clean_times):
+    resort_info = zip(filtered_resort_list, clean_dists, clean_times)
+    
+    if sort_opt == "ABC":
+        return(resort_info)    
+
+    elif sort_opt == "TIM":
+        return(time_order(resort_info))
+
+    elif sort_opt == "DIS":
+        i = 1
+
+    resort_info.sort(key = lambda t: t[i])
+
+    return(resort_info) 
+
+def time_order(resort_info):
+#Takes in zipped list of [(resorts, distances, times)] and converts string times to sum of minutes.
+#Returns sorted list based on sums of minutes.
+
+    minute_times = []
+
+    for resort in resort_info:
+        time_in_minutes = 0
+        google_time = resort[2]
+    
+        if 'day' in google_time:
+            parsed_time = re.split('day[s]? ', google_time)
+            time_in_minutes += 1440*int(parsed_time[0])
+            google_time = parsed_time[1]
+
+        if 'hour' in google_time:
+            parsed_time = re.split('hour[s]? ', google_time)
+            time_in_minutes += 60*int(parsed_time[0]) 
+            google_time = parsed_time[1]    
+
+        if 'min' in google_time:
+            parsed_time = re.split('min[s]?', google_time)
+            time_in_minutes += int(parsed_time[0]) 
+
+        minute_times.append(time_in_minutes)
+
+    resorts_with_times = zip(resort_info, minute_times)
+    resorts_with_times.sort(key = lambda t: t[1])
+    sorted_resorts = zip(*resorts_with_times)[:-1]
+    return(sorted_resorts[0])

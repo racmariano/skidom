@@ -57,6 +57,11 @@ class Resort(models.Model):
     num_green = models.IntegerField(default = 0)
     num_blue = models.IntegerField(default = 0)
     num_black = models.IntegerField(default = 0)
+    num_doubb = models.IntegerField(default = 0)
+
+    # Short 'our take' description
+    our_take = models.CharField(max_length = 1000, default = "This resort is so great! Yay, skiing!")
+
 
     # To mine num_open information from trail info page (url refers to trail info page) 
     url = models.URLField(blank=True)
@@ -100,6 +105,8 @@ class UserProfile(AbstractUser):
                      ("GL", "Glades"))
         
     favorite_runs = MultiSelectField(choices = RUN_CHOICES, default = "BE")
+    favorite_resorts = models.ManyToManyField(Resort, null = True, blank = True)    
+
     pass_type = models.CharField(max_length = 20, choices = PASS_CHOICES, default = "NON")
     own_equipment = models.BooleanField(default = False) 
 

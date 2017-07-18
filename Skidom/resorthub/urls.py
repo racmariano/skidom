@@ -6,5 +6,6 @@ from . import views
 app_name = 'resorthub'
 urlpatterns = [
     url(r'^$', views.index, name = 'index'),
-    url(r'^signup/$', views.signup, name = 'signup')
+    url(r'^signup/$', views.signup, name = 'signup'),
+    url(r'^resorts/$', views.resort_listing, name= 'resorts'),
 ]

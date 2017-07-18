@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'resorthub.apps.ResorthubConfig',
     'multiselectfield',
     'address',
-    'dynamic_scraper'
+    'dynamic_scraper',
+    'widget_tweaks'
 ]
 
 MIDDLEWARE = [

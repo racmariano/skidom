@@ -1,0 +1,44 @@
+{% load static %}
+
+<script type="text/javascript" src="{% static 'resorthub/overlay.js'  %}"></script>
+<link rel="stylesheet" type="text/css" href="{% static 'resorthub/style.css' %}" />
+
+<div class="skihead">
+    <span><h1> Skidom </h1></span>
+    <span class="link"><a href="{% url 'resorthub:signup' %}">User sign-up</a></span>
+    <span class ="link"><a href="{% url 'resorthub:resorts' %}">Resorts</a></span>
+    <span class ="link"><a href="{% url 'resorthub:index' %}"> Home </a></span>
+</div>
+
+<div class ="supres">
+    <table>
+        <tr class = "d0">
+            <td>Name</td>
+            <td>State</td>
+            <td>Website</td>
+            <td>Traits</td>
+            <td>About</td>
+            <td>Compare?</td>
+            <td>Add to favorites?</td>
+        </tr>
+        {% for resort in resorts %}
+            <tr>
+                <td class="name">{{ resort.name }}</td>
+                <td class="general"> {{ resort.address.locality.state.name }} </td>
+                <td class="general"><a href="{{ resort.web_home }}">Here</a></td>
+                <td class="general">N/A</td>
+                <td class="general"><a href="#" onclick='overlay("{{ resort.our_take }}")'>Our take: {{ resort.name }}</a></td>
+                <td class="compare">N/A</td>
+                <td class="faves">N/A</td>
+            </tr>    
+        {% endfor %}
+    </table>
+</div>
+
+<div id="overlay">
+    <div>
+        <p id="resort_description"></p>
+        <p class="exit_link"><a href="#" onclick='overlay("")'>Close</a></p>
+    </div>
+</div>
+

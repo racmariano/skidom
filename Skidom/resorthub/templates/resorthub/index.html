@@ -1,4 +1,15 @@
 {% load resort_filters %}
+{% load static %}
+{% load widget_tweaks %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'resorthub/style.css' %}" />
+
+<div class="skihead">
+    <span><h1> Skidom </h1></span>
+    <span class="link"><a href="{% url 'resorthub:signup' %}">User sign-up</a></span>
+    <span class ="link"><a href="{% url 'resorthub:resorts' %}">Resorts</a></span>
+    <span class ="link"><a href="{% url 'resorthub:index' %}"> Home </a></span>
+</div>
 
 {% if messages %}
   <ul class="messages">
@@ -8,59 +19,67 @@
   </ul>
 {% endif %}
 
-<form action="{% url 'resorthub:index' %}" method="post"> 
-{% csrf_token %}
-    {{ form }}
-<input type="submit" value="Update"/>
-</form>
 
-{% if invalid_address %}
-<p> Please enter a valid address! </p>
-{% endif %}
+<div class="getinfo">
+    <form action="{% url 'resorthub:index' %}" method="post"> 
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Let's go skiing!!!"/>
+    </form>
 
-{% if no_match %}
-<p> No resorts match your criteria. Please try a different search! </p>
-{% endif %}
+    {% if invalid_address %}
+        <p> Please enter a valid address! </p>
+    {% endif %}
 
-{% if address %}
-   <p> You will start at address {{ address }} and ski on {{ date }}.</p>
-{% else %}
-   <p> Please put in a starting address and what day you want to ski. </p>
+    {% if no_match %}
+        <p> No resorts match your criteria. Please try a different search! </p>
+    {% endif %}
 
-{% endif %}
+    {% if address %}
+        <p> You will start at address <span class="userinfo">{{ address }} </span> and ski on <span class="userinfo"> {{ date }} </span>.</p>
+    {% else %}
+        <p> Please put in a starting address and what day you want to ski. </p>
+    {% endif %}
+</div>
 
-{% if supported_resorts %}
-    <p> We currently support the following resorts: </p>
+<div class="supres">
+    {% if supported_resorts %}
+        <p> We currently support the following resorts: </p>
     
-    <table>
-      <tr>
-        <th>Resort</th>
-        <th>Address</th>
-        <th>Distance</th>
-        <th>Travel time</th>
-        <th>Current snow (in)</th>
-      </tr>
-      {% for resort in supported_resorts %}
-        <tr>
-            <td class="name">{{ resort.name  }}</td>
-            <td class="address">{{ resort.address }}</td>
+        <table>
+            <tr class="d0">
+                <td>Resort</td>
+                <td>Address</td>
+                <td>Distance (mi)</td>
+                <td>Travel time</td>
+                <td>New snow (in)</td>
+                <td>Trails open</td>
+            </tr>
+
+            {% for resort in supported_resorts %}
+                <tr>
+                    <td class="name">{{ resort.name  }}</td>
+                    <td class="address">{{ resort.address }}</td>
  
-            {% if distances %}
-                <td class="dist">{{ distances|use_index:forloop.counter0  }}</td>
-                <td class="time">{{ times|use_index:forloop.counter0 }}</td>
-            {% else %}         
-                <td class="dist">N/A</td>
-                <td class="time">N/A</td>
-            {% endif %}
+                {% if distances %}
+                    <td class="dist">{{ distances|use_index:forloop.counter0  }}</td>
+                    <td class="general">{{ times|use_index:forloop.counter0 }}</td>
+                {% else %}         
+                    <td class="dist">N/A</td>
+                    <td class="general">N/A</td>
+                {% endif %}
+                    <td class="general">{{resort.trail}}</td>
+                    <td class="general">N/A</td>
+                </tr>
+            {% endfor %}
+        </table>            
 
-            <td class="snow">N/A</td>
-        </tr>
-      {% endfor %}
-    </table>            
+        <p> And more are on the way soon! </p> 
 
-    <p> And more are on the way! </p> 
-{% else %}
-    <p>We currently don't support any resorts. Sadness!</p>
 
-{% endif %}
+    {% else %}
+        <p>We currently don't support any resorts. Sadness!</p>
+
+    {% endif %}
+</div>
 

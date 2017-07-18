@@ -9,7 +9,7 @@ import datetime
 class CustomUserCreationForm(UserCreationForm):
     class Meta:
         model = UserProfile
-        fields =  UserCreationForm.Meta.fields + ('address', 'favorite_runs', 'pass_type', 'own_equipment')
+        fields =  UserCreationForm.Meta.fields + ('address', 'favorite_runs', 'pass_type', 'own_equipment', 'favorite_resorts')
 
 
 class UserAddressForm(forms.Form):
@@ -26,7 +26,13 @@ class UserAddressForm(forms.Form):
                     ("POW", "Powder Alliance Pass"),
                     ("ROC", "Rocky Mountain Super Pass"))
 
+    SORT_OPTIONS = (("ABC", "Name"),
+                    ("DIS", "Shortest distance"),
+                    ("TIM", "Shortest time"),
+                    ("SNO", "Most fresh snow"),
+                    ("TRA", "Most trails open"))
+
     user_address = forms.CharField(label = "Starting address", max_length = 200)
     search_date = forms.DateField(widget = forms.SelectDateWidget, label = "Date", initial = datetime.date.today)
     pass_info = forms.MultipleChoiceField(label = "Look for resorts with what passes?", choices = PASS_CHOICES, required = True) 
-
+    sort_opt = forms.ChoiceField(label="Sort results by:", choices = SORT_OPTIONS)
