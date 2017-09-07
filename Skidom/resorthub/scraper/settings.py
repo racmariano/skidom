@@ -25,8 +25,8 @@ USER_AGENT = BOT_NAME+'_side_project_1.0'
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
 
 ITEM_PIPELINES = {
-    'dynamic_scraper.pipelines.ValidationPipeline': 400,
-    'resorthub.scraper.pipelines.DjangoWriterPipeline': 800,
+    'resorthub.scraper.pipelines.UpdateOrCreatePipeline': 400,
+    'dynamic_scraper.pipelines.ValidationPipeline': 800,
 }
 
 

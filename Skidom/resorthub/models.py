@@ -74,6 +74,7 @@ class Resort(models.Model):
 
 # Ski website model for scraping
 class TrailPage(models.Model):
+
     resort = models.ForeignKey(Resort, null = True, default=4)
     url = models.URLField(blank=True)
 
@@ -90,6 +91,9 @@ class TrailPage(models.Model):
             self.url = self.resort.url
 
     def __unicode__(self):
+        return self.url
+
+    def __str__(self):
         return self.url
 
 class TrailPageItem(DjangoItem):
