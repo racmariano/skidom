@@ -1,0 +1,28 @@
+{% load static %}
+
+<div class="skihead">
+    <span><h1> Skidom </h1></span>
+
+    {% if user.is_authenticated %}
+        <span class="link"><a href="{% url 'logout' %}">Logout</a></span>
+    
+    {% else %}
+        <span class="link"><a href="{% url 'resorthub:signup' %}">User sign-up</a></span>   
+        <span class="link"><a href="{% url 'login' %}">Login</a></span>   
+
+    {% endif %}
+
+    <span class ="link"><a href="{% url 'resorthub:resorts' %}">Resorts</a></span>      
+    <span class ="link"><a href="{% url 'resorthub:index' %}"> Home </a></span>
+</div>
+    
+{% if messages %}
+  <ul class="messages">
+  {% for message in messages %}
+      <li> {{ message }} </li>
+  {% endfor %}
+  </ul>
+{% endif %}
+
+{% block content %}
+{% endblock %}

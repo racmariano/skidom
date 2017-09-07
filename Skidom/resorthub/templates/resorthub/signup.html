@@ -1,4 +1,13 @@
-<h2>Skidom: Make new account</h2>
+{% extends "skidom_base.html" %}
+
+{% load resort_filters %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'resorthub/style.css' %}" />
+
+<h2>Make new account</h2>
 
 {% if messages %}
   <ul class="messages">
@@ -8,6 +17,7 @@
   </ul>
 {% endif %} 
 
+<div class ="supres">
 <p>By making a new account, you can save your preferences and have faster
 access to our recommended resorts! It'll get you on the snow faster! </p>
 
@@ -17,4 +27,6 @@ access to our recommended resorts! It'll get you on the snow faster! </p>
   <button type="submit">Make new account</button>
 </form>
 
+</div>
 
+{% endblock %}

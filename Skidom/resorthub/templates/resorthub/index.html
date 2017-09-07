@@ -1,24 +1,16 @@
+{% extends "skidom_base.html" %}
 {% load resort_filters %}
 {% load static %}
 {% load widget_tweaks %}
 
-<link rel="stylesheet" type="text/css" href="{% static 'resorthub/style.css' %}" />
 
-<div class="skihead">
-    <span><h1> Skidom </h1></span>
-    <span class="link"><a href="{% url 'resorthub:signup' %}">User sign-up</a></span>
-    <span class ="link"><a href="{% url 'resorthub:resorts' %}">Resorts</a></span>
-    <span class ="link"><a href="{% url 'resorthub:index' %}"> Home </a></span>
-</div>
+{% block content %}
 
-{% if messages %}
-  <ul class="messages">
-  {% for message in messages %}
-      <li> {{ message }} </li>
-  {% endfor %}
-  </ul>
+<link rel="stylesheet" type="text/css" href="{% static '/resorthub/style.css' %}" />
+
+{% if user.is_authenticated %}
+<p> Hi, {{ user.get_username }}! Welcome to Skidom! </p>
 {% endif %}
-
 
 <div class="getinfo">
     <form action="{% url 'resorthub:index' %}" method="post"> 
@@ -83,3 +75,4 @@
     {% endif %}
 </div>
 
+{% endblock %}

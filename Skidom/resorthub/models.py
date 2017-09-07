@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from multiselectfield import MultiSelectField
 from address.models import AddressField
 
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.auth.models import AbstractUser
@@ -97,6 +98,7 @@ class TrailPageItem(DjangoItem):
 # User model
 class UserProfile(AbstractUser):
     address = AddressField(null = True, blank = True)
+    email = models.EmailField(null = True, blank = True)
 
     RUN_CHOICES = (("BE", "Beginner"),
                      ("IN", "Intermediate"),

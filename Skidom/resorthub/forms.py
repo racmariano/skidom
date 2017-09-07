@@ -9,7 +9,7 @@ import datetime
 class CustomUserCreationForm(UserCreationForm):
     class Meta:
         model = UserProfile
-        fields =  UserCreationForm.Meta.fields + ('address', 'favorite_runs', 'pass_type', 'own_equipment', 'favorite_resorts')
+        fields =  UserCreationForm.Meta.fields + ('email', 'address', 'favorite_runs', 'pass_type', 'own_equipment', 'favorite_resorts')
 
 
 class UserAddressForm(forms.Form):
@@ -36,3 +36,4 @@ class UserAddressForm(forms.Form):
     search_date = forms.DateField(widget = forms.SelectDateWidget, label = "Date", initial = datetime.date.today)
     pass_info = forms.MultipleChoiceField(label = "Look for resorts with what passes?", choices = PASS_CHOICES, required = True) 
     sort_opt = forms.ChoiceField(label="Sort results by:", choices = SORT_OPTIONS)
+

@@ -1,3 +1,0 @@
-/html/body/div[1]/div[2]/div/div[2]/div[1]/div[2]/div/div[1]
-
-body > div.outer-wrapper > div.main > div > div.row > div.nine.columns.mainContent > div.trails-lifts.row > div > div:nth-child(1)

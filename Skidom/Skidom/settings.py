@@ -128,3 +128,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+
+#Login redirect
+# Redirect to home URL after login (Default redirects to /accounts/profile/)
+LOGIN_REDIRECT_URL = '/resorthub/'
+
+#We can't send emails yet...
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

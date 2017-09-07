@@ -1,14 +1,9 @@
+{% extends "skidom_base.html" %}
 {% load static %}
 
+{% block content %}
 <script type="text/javascript" src="{% static 'resorthub/overlay.js'  %}"></script>
 <link rel="stylesheet" type="text/css" href="{% static 'resorthub/style.css' %}" />
-
-<div class="skihead">
-    <span><h1> Skidom </h1></span>
-    <span class="link"><a href="{% url 'resorthub:signup' %}">User sign-up</a></span>
-    <span class ="link"><a href="{% url 'resorthub:resorts' %}">Resorts</a></span>
-    <span class ="link"><a href="{% url 'resorthub:index' %}"> Home </a></span>
-</div>
 
 <div class ="supres">
     <table>
@@ -41,4 +36,4 @@
         <p class="exit_link"><a href="#" onclick='overlay("")'>Close</a></p>
     </div>
 </div>
-
+{% endblock %}
