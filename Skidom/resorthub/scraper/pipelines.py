@@ -19,6 +19,7 @@ def get_or_create(item, spider, crawled_url):
 
     return (obj, exists)
 
+
 def update_model(destination, source, spider, commit=True):
     try:
         pk = destination.pk
@@ -36,6 +37,7 @@ def update_model(destination, source, spider, commit=True):
         spider.log(str(item._errors), logging.ERROR)
         raise DropItem("Missing attribute.")
 
+
 class UpdateOrCreatePipeline(object):
     def process_item(self, item, spider):
         if spider.conf['DO_ACTION']:
@@ -48,11 +50,13 @@ class UpdateOrCreatePipeline(object):
             obj, trailpage_exists = get_or_create(item, spider, crawled_url)
             
             if not trailpage_exists:
+            #If doesn't exist, create toy instance and overwrite in update
                 item = obj
                 obj = item.instance            
     
             update_model(obj, item, commit)
-                
+            spider.action_successful = True            
+    
         else:
             spider.log(str(item._errors), logging.ERROR)
             raise DropItem("Missing attribute.")
