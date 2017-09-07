@@ -44,7 +44,7 @@
                 <td>Address</td>
                 <td>Distance (mi)</td>
                 <td>Travel time</td>
-                <td>New snow (in)</td>
+                <td>Base temp</td>
                 <td>Trails open</td>
             </tr>
 
@@ -56,6 +56,7 @@
                 {% if distances %}
                     <td class="dist">{{ distances|use_index:forloop.counter0  }}</td>
                     <td class="general">{{ times|use_index:forloop.counter0 }}</td>
+                    <td class="general">{{ temps|use_index:forloop.counter0 }}</td>
                 {% else %}         
                     <td class="dist">N/A</td>
                     <td class="general">N/A</td>

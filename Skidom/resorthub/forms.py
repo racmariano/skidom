@@ -30,7 +30,9 @@ class UserAddressForm(forms.Form):
                     ("DIS", "Shortest distance"),
                     ("TIM", "Shortest time"),
                     ("SNO", "Most fresh snow"),
-                    ("TRA", "Most trails open"))
+                    ("TRA", "Most trails open"),
+                    ("WEA", "Warmest base"),
+                    )
 
     user_address = forms.CharField(label = "Starting address", max_length = 200)
     search_date = forms.DateField(widget = forms.SelectDateWidget, label = "Date", initial = datetime.date.today)

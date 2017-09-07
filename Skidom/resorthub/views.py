@@ -18,7 +18,7 @@ import googlemaps
 import json
 
 #Import Objects
-from .models import Resort
+from .models import Resort, TrailPage
 from .forms import UserAddressForm, CustomUserCreationForm
 
 #Global variables
@@ -92,9 +92,9 @@ def process_form(request, form, resort_list):
         return({'invalid_address': 1, 'form': form, 'supported_resorts': resort_list})
 
     ordered_resort_info = order_resorts(sort_opt, filtered_resort_list, clean_dists, clean_times)
-    ordered_resorts, ordered_dists, ordered_times = zip(*ordered_resort_info)
+    ordered_resorts, ordered_dists, ordered_times, ordered_temps = zip(*ordered_resort_info)
 
-    return({'form': form, 'address': address, 'date': date, 'supported_resorts': ordered_resorts, 'distances': ordered_dists, 'times': ordered_times})
+    return({'form': form, 'address': address, 'date': date, 'supported_resorts': ordered_resorts, 'distances': ordered_dists, 'times': ordered_times, 'temps': ordered_temps})
 
 
 
@@ -118,7 +118,9 @@ def use_googlemaps(address, resort_addresses):
     return(clean_map_dists, clean_map_times)
 
 def order_resorts(sort_opt, filtered_resort_list, clean_dists, clean_times):
-    resort_info = zip(filtered_resort_list, clean_dists, clean_times)
+    temps = [TrailPage.objects.get(resort=t.id).base_temp for t in filtered_resort_list]
+
+    resort_info = zip(filtered_resort_list, clean_dists, clean_times, temps)
     
     if sort_opt == "ABC":
         return(resort_info)    
@@ -129,7 +131,10 @@ def order_resorts(sort_opt, filtered_resort_list, clean_dists, clean_times):
     elif sort_opt == "DIS":
         i = 1
 
-    resort_info.sort(key = lambda t: t[i])
+    elif sort_opt == "WEA":
+        i = 3
+
+    resort_info.sort(key = lambda t: t[i], reverse=True)
 
     return(resort_info) 
 
