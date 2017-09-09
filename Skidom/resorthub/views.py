@@ -66,8 +66,8 @@ def profile_view(request):
 #COMPARE AND RESORT LISTING METHOOOODSSS!!!
 def resort_listing(request):
     if request.method == 'POST':
-        selected_resort_names = request.POST.getlist('choices[]')
-        selected_resorts = Resort.objects.filter(name__in=selected_resort_names)
+        selected_resort_ids = request.POST.getlist('choices[]')
+        selected_resorts = Resort.objects.filter(pk__in=selected_resort_ids)
         if ("compare" in request.POST.keys()):
                return render(request, 'resorthub/compare.html', {'resorts': selected_resorts})
  

@@ -24,7 +24,7 @@
                 <td class="general"><a href="{{ resort.web_home }}">Here</a></td>
                 <td class="general">N/A</td>
                 <td class="general"><a href="#" onclick='overlay("{{ resort.our_take }}")'>Our take: {{ resort.name }}</a></td>
-                <td class="compare"><input type="checkbox" name="choices[]" id="{{resort.id}}" value={{resort}}></td>
+                <td class="compare"><input type="checkbox" name="choices[]" id="{{resort.id}}" value={{resort.id}}></td>
             </tr>    
         {% endfor %}
    </table>
