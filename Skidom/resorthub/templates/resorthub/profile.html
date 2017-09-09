@@ -1,0 +1,16 @@
+{% extends "skidom_base.html" %}
+
+{% block content %}
+<p> Welcome back, {{user.username}}!<p>
+{% if resort_num > 1 %}
+    <p> Your favorite resorts are {{favorite_resorts}}.</p>
+
+{% elif resort_num > 0 %}
+    <p> Your favorite resort is {{favorite_resorts}}.</p>
+
+{% else %}
+    <p> You don't have any favorite resorts! You can add some on the resorts page.</p>
+
+{% endif %}
+
+{% endblock %}

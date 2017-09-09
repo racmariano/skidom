@@ -2,18 +2,20 @@
 {% load static %}
 
 {% block content %}
-<script type="text/javascript" src="{% static 'resorthub/overlay.js'  %}"></script>
+<script type="text/javascript" src="{% static 'resorthub/resort_table.js'  %}"></script>
+
 
 <div class ="supres">
-    <table>
+    <form action="{% url 'resorthub:resorts' %}" method="post">
+        {% csrf_token %} 
+        <table>
         <tr class = "d0">
             <td>Name</td>
             <td>State</td>
             <td>Website</td>
             <td>Traits</td>
             <td>About</td>
-            <td>Compare?</td>
-            <td>Add to favorites?</td>
+            <td>Select</td>
         </tr>
         {% for resort in resorts %}
             <tr>
@@ -22,11 +24,13 @@
                 <td class="general"><a href="{{ resort.web_home }}">Here</a></td>
                 <td class="general">N/A</td>
                 <td class="general"><a href="#" onclick='overlay("{{ resort.our_take }}")'>Our take: {{ resort.name }}</a></td>
-                <td class="compare">N/A</td>
-                <td class="faves">N/A</td>
+                <td class="compare"><input type="checkbox" name="choices[]" id="{{resort.id}}" value={{resort}}></td>
             </tr>    
         {% endfor %}
-    </table>
+   </table>
+       <button type="submit" name="compare">Compare selected resorts</button>
+        <button type="submit" name="favorite">Add selected resorts to favorites</button>
+    </form> 
 </div>
 
 <div id="overlay">

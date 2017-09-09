@@ -79,8 +79,8 @@ class TrailPage(models.Model):
     url = models.URLField(blank=True)
 
     num_open = models.IntegerField(default = 999)
-    base_temp = models.DecimalField(max_digits = 3, decimal_places = 1, default = 0)
-    summit_temp = models.DecimalField(max_digits = 3, decimal_places = 1, default = 0)
+    base_temp = models.DecimalField(max_digits = 6, decimal_places = 2, default = 0)
+    summit_temp = models.DecimalField(max_digits = 6, decimal_places = 2, default = 0)
     new_snow =  models.CharField(default = "", max_length = 100)
 
     checker_runtime = models.ForeignKey(SchedulerRuntime, blank = True, null = True, on_delete = models.SET_NULL)

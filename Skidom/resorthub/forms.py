@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 
 from django.contrib.auth.models import User
-from .models import UserProfile
+from .models import UserProfile, Resort
 
 import datetime
 
@@ -39,3 +39,9 @@ class UserAddressForm(forms.Form):
     pass_info = forms.MultipleChoiceField(label = "Look for resorts with what passes?", choices = PASS_CHOICES, required = True) 
     sort_opt = forms.ChoiceField(label="Sort results by:", choices = SORT_OPTIONS)
 
+class CompareOrFavoriteForm(forms.Form):
+    """ Gets relevant resorts from resort page """
+    choices = forms.ModelMultipleChoiceField(
+            queryset = Resort.objects.order_by('name'),
+            widget = forms.CheckboxSelectMultiple, 
+    )

@@ -11,6 +11,7 @@ from django.contrib import messages
 
 #Libraries for user support
 from django.contrib.auth import login, authenticate
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 
 #Libraries for distancce/time estimates
@@ -19,11 +20,10 @@ import json
 
 #Import Objects
 from .models import Resort, TrailPage
-from .forms import UserAddressForm, CustomUserCreationForm
+from .forms import UserAddressForm, CustomUserCreationForm, CompareOrFavoriteForm
 
 #Global variables
 gmaps = googlemaps.Client(key='AIzaSyBRrCgnGFkdRY-Z1hX6xaxoUFBczNI2664')
-
 
 
 #USER CREATION METHODS!!!
@@ -50,9 +50,41 @@ def signup(request):
         user_form = CustomUserCreationForm()
         return render(request, 'resorthub/signup.html', {'user_form': user_form })
 
+@login_required()
+def profile_view(request):
+    favorite_resorts = request.user.favorite_resorts.all()
+    num_resorts = len(favorite_resorts)
+    resort_names = ""
+
+    if (len(favorite_resorts) == 1):
+        resort_names = favorite_resorts[0].name
+    elif (len(favorite_resorts) > 1):
+        resort_names = ", ".join([resort.name for resort in favorite_resorts[:num_resorts-1]])+" and "+favorite_resorts.last().name
+ 
+    return render(request, 'resorthub/profile.html', {'user': request.user, 'resort_num': num_resorts, 'favorite_resorts': resort_names})
+
+#COMPARE AND RESORT LISTING METHOOOODSSS!!!
 def resort_listing(request):
-    resort_list = Resort.objects.order_by('name')
-    return render(request, 'resorthub/resorts.html', {'resorts': resort_list})
+    if request.method == 'POST':
+        selected_resort_names = request.POST.getlist('choices[]')
+        selected_resorts = Resort.objects.filter(name__in=selected_resort_names)
+        if ("compare" in request.POST.keys()):
+               return render(request, 'resorthub/compare.html', {'resorts': selected_resorts})
+ 
+        elif ("favorite" in request.POST):
+            if not request.user.is_authenticated():
+                return redirect("/accounts/login/")
+            else:
+                request.user.favorite_resorts.add(*selected_resorts)
+                request.user.save()
+                return redirect("/resorthub/profile/")
+                
+    else:
+        resort_list = Resort.objects.order_by('name')
+        return render(request, 'resorthub/resorts.html', {'resorts': resort_list})
+
+def compare_listing(request, resort_list=Resort.objects.all()):
+        return render(request, 'resorthub/compare.html', {'resorts': resort_list})
 
 
 #RESORT HUB METHODS!!!!
