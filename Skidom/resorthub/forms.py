@@ -10,6 +10,11 @@ class UserAddressForm(forms.Form):
     """
     Makes user data entry form for index. Gets location and date of trip.
     """
+
+    def __init__(self, *args, **kwargs):
+        starting_from = kwargs.pop('starting_from')
+        super(UserAddressForm, self).__init__(*args, **kwargs)
+        self.fields['user_address'].initial = starting_from
  
     PASS_CHOICES = (("NON", "None"),
                     ("EPI", "Epic Pass"),
@@ -32,6 +37,8 @@ class UserAddressForm(forms.Form):
     search_date = forms.DateField(widget = forms.SelectDateWidget, label = "Date", initial = datetime.date.today)
     pass_info = forms.MultipleChoiceField(label = "Look for resorts with what passes?", choices = PASS_CHOICES, required = True) 
     sort_opt = forms.ChoiceField(label="Sort results by:", choices = SORT_OPTIONS)
+
+
 
 class CompareOrFavoriteForm(forms.Form):
     """ Gets relevant resorts from resort page """

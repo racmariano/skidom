@@ -55,7 +55,7 @@ def index(request):
     resort_list = Resort.objects.order_by('name')
 
     if request.method == 'POST':
-        form = UserAddressForm(request.POST)
+        form = UserAddressForm(request.POST, starting_from = request.POST['user_address'])
 
         if form.is_valid():
             form_dict = process_form(request, form, resort_list)
@@ -65,7 +65,12 @@ def index(request):
             return render(request, 'resorthub/index.html', {'form': form, 'supported_resorts': resort_list})
 
     else:
-        form = UserAddressForm() 
+        if request.user.is_authenticated():
+            address = request.user.address
+        else:
+            address = 'Let\'s go!'
+
+        form = UserAddressForm(starting_from=address) 
         return render(request, 'resorthub/index.html', {'form': form, 'supported_resorts': resort_list})
 
 
