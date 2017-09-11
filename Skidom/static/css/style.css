@@ -1,13 +1,25 @@
+body {
+    background-color: #a0c1de;
+}
+
 .skihead {
     width: 1000px;
-    padding-bottom: 10px;
+    padding: 7px;
+    background: #ffffff;
+    border-width:15px; 
+    border-color: #ff1100;
+    border-left-style: solid;
 }
 
 .skihead h1 {
-    color: #3366CC;
+    color: #ab0226; 
     font-size: 30px;
     font-style: oblique;
     display: inline;
+}
+
+h2 {
+    color: #ab0226;
 }
 
 .skihead .link {
@@ -15,61 +27,86 @@
     padding-left: 10px;
 }
 
+.shared {
+    float: right;
+    width: 500px;
+}
+
 .getinfo {   
     width: 1000px;
-    height: 220px;    
-    background: rgba(98, 234, 139, 0.2);
-    border-radius: 10px;
+    height: 40%;   
+    background: #ffffff;
     padding: 10px;
+    padding-top: 10px;
+    border-style: solid;
+    border-width: 5px;
+    border-color: #56626e;
 }
 
 .userinfo {
     font-weight: bold;
 }
 
-.supres {
-    background: rgba(98, 202, 234, 0.2); 
-    border-radius: 10px;
-    padding: 10px;
+.supres { 
+    clear: both;
+    background: #ffffff; 
     width: 1000px;
-    height: 70%;
-    margin-top: 15px;
+    height: 40%;
+    padding: 10px;
+    border-style: solid;
+    border-width: 5px;
+    border-color: #56626e;
 }
 
-tr.d0 td {
-    color: #3366CC;
+
+.compareresorts { 
+    clear: both;
+    background: #ffffff;
+    width: 1000px;
+    height: 90%;
+    padding: 10px;
+    border-style: solid;
+    border-width: 5px;
+    border-color: #56626e;
+    overflow: scroll;
+}
+
+th {
+    color: #4d6178;
     font-weight: bold;
     font-size: 18px;
+    text-align: left;
 }
 
 td.name {
-    width: 100px;
+    width: 200px;
     font-weight: bold;
     color: #3366CC;
 }
 
-td.address {
+td.threehun {
     width: 300px;
 }
 
-td.dist {
-    width: 150px;
-}
-
-td.general {
+td.twohun {
     width: 200px;
 }
 
-td.pic {
+td.general {
     width: 150px;
 }
 
-td.compare {
-    width: 150px;
+td.onehun {
+    width: 100px;
 }
 
-td.faves {
-    width: 150px;
+table {
+    border-collapse: collapse;
+}
+
+td {
+    padding-top: .5em;
+    padding-bottom: .5em;
 }
 
 #overlay {

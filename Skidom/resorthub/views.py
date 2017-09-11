@@ -52,18 +52,26 @@ def compare_listing(request, resort_list=Resort.objects.all()):
 
 
 #RESORT HUB METHODS!!!!
-def index(request): 
-    resort_list = Resort.objects.order_by('name')
+def get_scraped_info(resort_list):
+    trail_pages = [TrailPage.objects.get(resort=t.id) for t in resort_list]
+    base_temps = [str(int(t.base_temp))+"° F" for t in trail_pages]
+    num_open = [t.num_open for t in  trail_pages]
+    new_snow =  [t.new_snow for t in trail_pages]
 
+    return(base_temps, num_open, new_snow)
+
+def index(request):
+    resort_list = Resort.objects.all() 
     if request.method == 'POST':
         form = UserAddressForm(request.POST, pass_type = request.POST['pass_type'], starting_from = request.POST['user_address'])
 
         if form.is_valid():
             form_dict = process_form(request, form, resort_list)
-            return render(request, 'resorthub/index.html', form_dict)
+            return render(request, 'resorthub/compare_options.html', form_dict)
 
         else:
             return render(request, 'resorthub/index.html', {'form': form, 'supported_resorts': resort_list})
+
 
     else:
         if request.user.is_authenticated():
@@ -73,8 +81,11 @@ def index(request):
             address = 'Let\'s go!'
             pass_type = "NON"
 
+        resort_list = Resort.objects.filter(pk__lte=10).exclude(url__exact='').order_by('name')
+        base_temps, num_open, new_snow = get_scraped_info(resort_list)
+
         form = UserAddressForm(pass_type = pass_type, starting_from=address) 
-        return render(request, 'resorthub/index.html', {'form': form, 'supported_resorts': resort_list})
+        return render(request, 'resorthub/index.html', {'form': form, 'supported_resorts': resort_list, 'base_temps': base_temps, 'trails_open': num_open, 'new_snow': new_snow})
 
 
 def process_form(request, form, resort_list):
@@ -82,8 +93,11 @@ def process_form(request, form, resort_list):
     date = form.cleaned_data['search_date']
     pass_info = form.cleaned_data['pass_type'][0]
     sort_opt = form.cleaned_data['sort_opt']
-            
-    filtered_resort_list = Resort.objects.filter(available_passes__contains=pass_info).order_by('name')
+    print(pass_info)
+
+    #If we haven't made a crawler page, the url will be blank            
+    filtered_resort_list = Resort.objects.filter(pk__lte=10, available_passes__contains=pass_info).exclude(url__exact='').order_by('name')
+    print(filtered_resort_list.all())
 
     if not filtered_resort_list:
         return({'no_match': 1, 'form': form, 'supported_resorts': resort_list})
@@ -95,9 +109,9 @@ def process_form(request, form, resort_list):
         return({'invalid_address': 1, 'form': form, 'supported_resorts': resort_list})
 
     ordered_resort_info = order_resorts(sort_opt, filtered_resort_list, clean_dists, clean_times)
-    ordered_resorts, ordered_dists, ordered_times, ordered_temps = zip(*ordered_resort_info)
+    ordered_resorts, ordered_dists, ordered_times, ordered_temps, ordered_open, ordered_snow = zip(*ordered_resort_info)
 
-    return({'form': form, 'address': address, 'date': date, 'supported_resorts': ordered_resorts, 'distances': ordered_dists, 'times': ordered_times, 'temps': ordered_temps})
+    return({'form': form, 'address': address, 'date': date, 'supported_resorts': ordered_resorts, 'distances': ordered_dists, 'times': ordered_times, 'base_temps': ordered_temps, 'trails_open':ordered_open, 'new_snow':ordered_snow,})
 
 
 
@@ -121,9 +135,8 @@ def use_googlemaps(address, resort_addresses):
     return(clean_map_dists, clean_map_times)
 
 def order_resorts(sort_opt, filtered_resort_list, clean_dists, clean_times):
-    temps = [TrailPage.objects.get(resort=t.id).base_temp for t in filtered_resort_list]
-
-    resort_info = zip(filtered_resort_list, clean_dists, clean_times, temps)
+    base_temps, num_open, new_snow = get_scraped_info(filtered_resort_list)
+    resort_info = zip(filtered_resort_list, clean_dists, clean_times, base_temps, num_open, new_snow)
     
     if sort_opt == "ABC":
         return(resort_info)    
@@ -133,11 +146,13 @@ def order_resorts(sort_opt, filtered_resort_list, clean_dists, clean_times):
 
     elif sort_opt == "DIS":
         i = 1
+        flag = 0
 
     elif sort_opt == "WEA":
         i = 3
+        flag = 1
 
-    resort_info.sort(key = lambda t: t[i], reverse=True)
+    resort_info.sort(key = lambda t: t[i], reverse=flag)
 
     return(resort_info) 
 
