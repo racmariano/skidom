@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'polls.apps.PollsConfig',
     'resorthub.apps.ResorthubConfig',
+    'usersettings.apps.UsersettingsConfig',
     'multiselectfield',
     'address',
     'dynamic_scraper',

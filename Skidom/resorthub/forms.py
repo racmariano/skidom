@@ -6,12 +6,6 @@ from .models import UserProfile, Resort
 
 import datetime
 
-class CustomUserCreationForm(UserCreationForm):
-    class Meta:
-        model = UserProfile
-        fields =  UserCreationForm.Meta.fields + ('email', 'address', 'favorite_runs', 'pass_type', 'own_equipment', 'favorite_resorts')
-
-
 class UserAddressForm(forms.Form):
     """
     Makes user data entry form for index. Gets location and date of trip.

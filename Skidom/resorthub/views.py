@@ -20,48 +20,11 @@ import json
 
 #Import Objects
 from .models import Resort, TrailPage
-from .forms import UserAddressForm, CustomUserCreationForm, CompareOrFavoriteForm
+from .forms import UserAddressForm, CompareOrFavoriteForm
 
 #Global variables
 gmaps = googlemaps.Client(key='AIzaSyBRrCgnGFkdRY-Z1hX6xaxoUFBczNI2664')
 
-
-#USER CREATION METHODS!!!
-#This code was copied and then modified from the website simpleisbetterthancomplex
-
-def signup(request):
-    if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST)
-
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data['username']
-            raw_password = form.cleaned_data['password1']
-            user = authenticate(username = username, password = raw_password)
-            login(request, user)
-            messages.success(request, "Awesome! Thank you so much for making an account!")
-            return redirect("/resorthub/", )
-
-        else:
-            messages.warning(request, 'There has been an error. Please try again!')
-            return redirect("/resorthub/signup", ) 
-
-    else:
-        user_form = CustomUserCreationForm()
-        return render(request, 'resorthub/signup.html', {'user_form': user_form })
-
-@login_required()
-def profile_view(request):
-    favorite_resorts = request.user.favorite_resorts.all()
-    num_resorts = len(favorite_resorts)
-    resort_names = ""
-
-    if (len(favorite_resorts) == 1):
-        resort_names = favorite_resorts[0].name
-    elif (len(favorite_resorts) > 1):
-        resort_names = ", ".join([resort.name for resort in favorite_resorts[:num_resorts-1]])+" and "+favorite_resorts.last().name
- 
-    return render(request, 'resorthub/profile.html', {'user': request.user, 'resort_num': num_resorts, 'favorite_resorts': resort_names})
 
 #COMPARE AND RESORT LISTING METHOOOODSSS!!!
 def resort_listing(request):
