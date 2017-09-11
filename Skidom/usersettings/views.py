@@ -15,7 +15,7 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.forms import UserCreationForm
 
 from resorthub.models import Resort, UserProfile
-from .forms import CustomUserCreationForm
+from .forms import CustomUserCreationForm, EditProfileForm
 
 
 def signup(request):
@@ -41,13 +41,14 @@ def signup(request):
 
 @login_required()
 def profile_view(request):
-    favorite_resorts = request.user.favorite_resorts.all()
-    num_resorts = len(favorite_resorts)
-    resort_names = ""
+    if request.method == 'POST':
+        form = EditProfileForm(request.POST, user=request.user, instance=request.user)
 
-    if (len(favorite_resorts) == 1):
-        resort_names = favorite_resorts[0].name
-    elif (len(favorite_resorts) > 1):
-        resort_names = ", ".join([resort.name for resort in favorite_resorts[:num_resorts-1]])+" and "+favorite_resorts.last().name
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Your account was updated successfully.")
+        return redirect("/usersettings/profile", )
 
-    return render(request, 'usersettings/profile.html', {'user': request.user, 'resort_num': num_resorts, 'favorite_resorts': resort_names})
+    else:
+        form = EditProfileForm(user=request.user)
+        return render(request, 'usersettings/profile.html', {'form': form})
