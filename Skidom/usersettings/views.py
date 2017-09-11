@@ -29,7 +29,7 @@ def signup(request):
             user = authenticate(username = username, password = raw_password)
             login(request, user)
             messages.success(request, "Awesome! Thank you so much for making an account!")
-            return redirect("/resorthub/", )
+            return redirect("/usersettings/profile", )
 
         else:
             messages.warning(request, 'There has been an error. Please try again!')

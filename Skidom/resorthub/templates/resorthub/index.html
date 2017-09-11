@@ -5,11 +5,6 @@
 
 {% block content %}
 
-
-{% if user.is_authenticated %}
-<p> Hi, {{ user.get_username }}! Welcome to Skidom! </p>
-{% endif %}
-
 <div class="getinfo">
     <form action="{% url 'resorthub:index' %}" method="post"> 
         {% csrf_token %}

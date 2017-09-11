@@ -13,9 +13,11 @@ class UserAddressForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         starting_from = kwargs.pop('starting_from')
+        pass_type = kwargs.pop('pass_type')
         super(UserAddressForm, self).__init__(*args, **kwargs)
         self.fields['user_address'].initial = starting_from
- 
+        self.fields['pass_type'].initial = pass_type 
+
     PASS_CHOICES = (("NON", "None"),
                     ("EPI", "Epic Pass"),
                     ("MAX", "Max Pass"),
@@ -35,7 +37,7 @@ class UserAddressForm(forms.Form):
 
     user_address = forms.CharField(label = "Starting address", max_length = 200)
     search_date = forms.DateField(widget = forms.SelectDateWidget, label = "Date", initial = datetime.date.today)
-    pass_info = forms.MultipleChoiceField(label = "Look for resorts with what passes?", choices = PASS_CHOICES, required = True) 
+    pass_type = forms.MultipleChoiceField(label = "Look for resorts with what passes?", choices = PASS_CHOICES, required = True) 
     sort_opt = forms.ChoiceField(label="Sort results by:", choices = SORT_OPTIONS)
 
 

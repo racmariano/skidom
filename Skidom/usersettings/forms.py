@@ -8,7 +8,9 @@ from resorthub.models import UserProfile, Resort
 class CustomUserCreationForm(UserCreationForm):
     class Meta:
         model = UserProfile
-        fields =  UserCreationForm.Meta.fields + ('email', 'address', 'favorite_runs', 'pass_type', 'own_equipment', 'favorite_resorts')
+        fields =  UserCreationForm.Meta.fields
+
+    email = forms.EmailField(required=True)
 
 
 class EditProfileForm(forms.ModelForm):

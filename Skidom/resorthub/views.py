@@ -40,7 +40,8 @@ def resort_listing(request):
             else:
                 request.user.favorite_resorts.add(*selected_resorts)
                 request.user.save()
-                return redirect("/resorthub/profile/")
+                messages.success(request, "Resorts added to favorites.")
+                return redirect("/usersettings/profile/")
                 
     else:
         resort_list = Resort.objects.order_by('name')
@@ -55,7 +56,7 @@ def index(request):
     resort_list = Resort.objects.order_by('name')
 
     if request.method == 'POST':
-        form = UserAddressForm(request.POST, starting_from = request.POST['user_address'])
+        form = UserAddressForm(request.POST, pass_type = request.POST['pass_type'], starting_from = request.POST['user_address'])
 
         if form.is_valid():
             form_dict = process_form(request, form, resort_list)
@@ -67,17 +68,19 @@ def index(request):
     else:
         if request.user.is_authenticated():
             address = request.user.address
+            pass_type = request.user.pass_type
         else:
             address = 'Let\'s go!'
+            pass_type = "NON"
 
-        form = UserAddressForm(starting_from=address) 
+        form = UserAddressForm(pass_type = pass_type, starting_from=address) 
         return render(request, 'resorthub/index.html', {'form': form, 'supported_resorts': resort_list})
 
 
 def process_form(request, form, resort_list):
     address = form.cleaned_data['user_address']
     date = form.cleaned_data['search_date']
-    pass_info = form.cleaned_data['pass_info'][0]
+    pass_info = form.cleaned_data['pass_type'][0]
     sort_opt = form.cleaned_data['sort_opt']
             
     filtered_resort_list = Resort.objects.filter(available_passes__contains=pass_info).order_by('name')

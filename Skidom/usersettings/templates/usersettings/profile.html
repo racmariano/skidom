@@ -1,8 +1,7 @@
 {% extends "skidom_base.html" %}
 
 {% block content %}
-<p> Welcome back, {{user.username}}!<p>
- 
+<h2>{{ user.username }}'s profile</h2>
 <form method="post">
     {% csrf_token %}
     {{ form.as_p}}
