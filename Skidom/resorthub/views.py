@@ -38,10 +38,13 @@ def resort_listing(request):
                 else:
                     g = GeoIP2()
                     ip = request.META.get('REMOTE_ADDR', None)
+
                     if ip:
-                        starting_address = g.city(ip)['city']
-                    else:
-                        starting_address = "Boston MA"
+                        try:
+                            geoip_city = g.city(ip)
+                            starting_address = geoip_city['city']
+                        except:
+                            starting_address = "Boston MA"
 
                 return render(request, 'resorthub/compare.html', {'resorts': selected_resorts})
  
