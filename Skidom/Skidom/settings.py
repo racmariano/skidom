@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.gis.utils',
+    'django.contrib.gis.geoip2',
     'polls.apps.PollsConfig',
     'resorthub.apps.ResorthubConfig',
     'usersettings.apps.UsersettingsConfig',
@@ -139,3 +139,6 @@ LOGIN_REDIRECT_URL = '/resorthub/'
 
 #We can't send emails yet...
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+#Geoip path!
+GEOIP_PATH = os.path.join(BASE_DIR, 'static/geoip_city')
