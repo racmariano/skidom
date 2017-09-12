@@ -46,7 +46,14 @@ def resort_listing(request):
                         except:
                             starting_address = "Boston MA"
 
-                return render(request, 'resorthub/compare.html', {'resorts': selected_resorts})
+                resort_addresses = [x.address.raw for x in selected_resorts] 
+                clean_dists, clean_times = use_googlemaps(starting_address, resort_addresses)
+
+                return render(request, 'resorthub/compare.html', {
+                    'resorts': selected_resorts,
+                    'distances': clean_dists,
+                    'times': clean_times,
+                })
  
         elif ("favorite" in request.POST):
             if not request.user.is_authenticated():
