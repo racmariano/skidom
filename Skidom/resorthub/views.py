@@ -85,18 +85,24 @@ def index(request):
 
 
     else:
+        header_message = "Where we\'d ski this weekend:"
+        resort_list = Resort.objects.filter(pk__lte=10).exclude(url__exact='').order_by('name')
+
         if request.user.is_authenticated():
             address = request.user.address
-            pass_type = request.user.pass_type
+            pass_type = request.user.pass_type            
+            if len(request.user.favorite_resorts.all()) > 0:
+                header_message = "What's up with your favorite resorts:"
+                resort_list = request.user.favorite_resorts.all().order_by('name')
+
         else:
             address = 'Let\'s go!'
             pass_type = "NON"
 
-        resort_list = Resort.objects.filter(pk__lte=10).exclude(url__exact='').order_by('name')
         base_temps, num_open, new_snow = get_scraped_info(resort_list)
 
         form = UserAddressForm(pass_type = pass_type, starting_from=address) 
-        return render(request, 'resorthub/index.html', {'form': form, 'supported_resorts': resort_list, 'base_temps': base_temps, 'trails_open': num_open, 'new_snow': new_snow})
+        return render(request, 'resorthub/index.html', {'form': form, 'header_message': header_message, 'supported_resorts': resort_list, 'base_temps': base_temps, 'trails_open': num_open, 'new_snow': new_snow})
 
 
 def process_form(request, form, resort_list):

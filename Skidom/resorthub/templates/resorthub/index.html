@@ -21,10 +21,6 @@
         {% if no_match %}
             <p> No resorts match your criteria. Please try a different search! </p>
         {% endif %}
-
-        {% if address %}
-            <p> You will start at address <span class="userinfo">{{ address }} </span> and ski on <span class="userinfo"> {{ date }} </span>.</p>
-        {% endif %}
     </div>
     <div class="shared"> 
         <img src="{% static 'resorthub/images/0_index_pic.png' %}"> 
@@ -34,7 +30,7 @@
 <br><br>
 <div class="supres">
     {% if supported_resorts %}
-       <p> <h2> Where we'd ski this weekend: </h2> </p>   
+       <p> <h2> {{ header_message }} </h2> </p>   
  
         <table>
             <theader>
