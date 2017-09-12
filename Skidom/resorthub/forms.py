@@ -2,21 +2,22 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 
 from django.contrib.auth.models import User
-from .models import UserProfile
+from .models import UserProfile, Resort
 
 import datetime
-
-class CustomUserCreationForm(UserCreationForm):
-    class Meta:
-        model = UserProfile
-        fields =  UserCreationForm.Meta.fields + ('email', 'address', 'favorite_runs', 'pass_type', 'own_equipment', 'favorite_resorts')
-
 
 class UserAddressForm(forms.Form):
     """
     Makes user data entry form for index. Gets location and date of trip.
     """
- 
+
+    def __init__(self, *args, **kwargs):
+        starting_from = kwargs.pop('starting_from')
+        pass_type = kwargs.pop('pass_type')
+        super(UserAddressForm, self).__init__(*args, **kwargs)
+        self.fields['user_address'].initial = starting_from
+        self.fields['pass_type'].initial = pass_type 
+
     PASS_CHOICES = (("NON", "None"),
                     ("EPI", "Epic Pass"),
                     ("MAX", "Max Pass"),
@@ -36,6 +37,14 @@ class UserAddressForm(forms.Form):
 
     user_address = forms.CharField(label = "Starting address", max_length = 200)
     search_date = forms.DateField(widget = forms.SelectDateWidget, label = "Date", initial = datetime.date.today)
-    pass_info = forms.MultipleChoiceField(label = "Look for resorts with what passes?", choices = PASS_CHOICES, required = True) 
+    pass_type = forms.MultipleChoiceField(label = "Look for resorts with what passes?", choices = PASS_CHOICES, required = True) 
     sort_opt = forms.ChoiceField(label="Sort results by:", choices = SORT_OPTIONS)
 
+
+
+class CompareOrFavoriteForm(forms.Form):
+    """ Gets relevant resorts from resort page """
+    choices = forms.ModelMultipleChoiceField(
+            queryset = Resort.objects.order_by('name'),
+            widget = forms.CheckboxSelectMultiple, 
+    )

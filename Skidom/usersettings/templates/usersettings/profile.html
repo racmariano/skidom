@@ -1,0 +1,11 @@
+{% extends "skidom_base.html" %}
+
+{% block content %}
+<h2>{{ user.username }}'s profile</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p}}
+    <button type="submit">Update profile</button>
+</form>
+
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "skidom_base.html" %}
+{% load static %}
+
+{% block content %}
+
+This will eventually be the compare function. 
+Meooow.
+
+<div class ="supres">
+    <table>
+        <tr class = "d0">
+            <td>Name</td>
+            <td>State</td>
+            <td>Website</td>
+        </tr>
+        {% for resort in resorts %}
+            <tr>
+                <td class="name">{{ resort.name }}</td>
+                <td class="general"> {{ resort.address.locality.state.name }} </td>
+                <td class="general"><a href="{{ resort.web_home }}">Here</a></td>
+            </tr>    
+        {% endfor %}
+   </table>
+</div>
+
+{% endblock %}

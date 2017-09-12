@@ -11,6 +11,7 @@ from django.contrib import messages
 
 #Libraries for user support
 from django.contrib.auth import login, authenticate
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 
 #Libraries for distancce/time estimates
@@ -19,40 +20,35 @@ import json
 
 #Import Objects
 from .models import Resort, TrailPage
-from .forms import UserAddressForm, CustomUserCreationForm
+from .forms import UserAddressForm, CompareOrFavoriteForm
 
 #Global variables
 gmaps = googlemaps.Client(key='AIzaSyBRrCgnGFkdRY-Z1hX6xaxoUFBczNI2664')
 
 
-
-#USER CREATION METHODS!!!
-#This code was copied and then modified from the website simpleisbetterthancomplex
-
-def signup(request):
-    if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST)
-
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data['username']
-            raw_password = form.cleaned_data['password1']
-            user = authenticate(username = username, password = raw_password)
-            login(request, user)
-            messages.success(request, "Awesome! Thank you so much for making an account!")
-            return redirect("/resorthub/", )
-
-        else:
-            messages.warning(request, 'There has been an error. Please try again!')
-            return redirect("/resorthub/signup", ) 
-
-    else:
-        user_form = CustomUserCreationForm()
-        return render(request, 'resorthub/signup.html', {'user_form': user_form })
-
+#COMPARE AND RESORT LISTING METHOOOODSSS!!!
 def resort_listing(request):
-    resort_list = Resort.objects.order_by('name')
-    return render(request, 'resorthub/resorts.html', {'resorts': resort_list})
+    if request.method == 'POST':
+        selected_resort_ids = request.POST.getlist('choices[]')
+        selected_resorts = Resort.objects.filter(pk__in=selected_resort_ids)
+        if ("compare" in request.POST.keys()):
+               return render(request, 'resorthub/compare.html', {'resorts': selected_resorts})
+ 
+        elif ("favorite" in request.POST):
+            if not request.user.is_authenticated():
+                return redirect("/accounts/login/")
+            else:
+                request.user.favorite_resorts.add(*selected_resorts)
+                request.user.save()
+                messages.success(request, "Resorts added to favorites.")
+                return redirect("/usersettings/profile/")
+                
+    else:
+        resort_list = Resort.objects.order_by('name')
+        return render(request, 'resorthub/resorts.html', {'resorts': resort_list})
+
+def compare_listing(request, resort_list=Resort.objects.all()):
+        return render(request, 'resorthub/compare.html', {'resorts': resort_list})
 
 
 #RESORT HUB METHODS!!!!
@@ -60,7 +56,7 @@ def index(request):
     resort_list = Resort.objects.order_by('name')
 
     if request.method == 'POST':
-        form = UserAddressForm(request.POST)
+        form = UserAddressForm(request.POST, pass_type = request.POST['pass_type'], starting_from = request.POST['user_address'])
 
         if form.is_valid():
             form_dict = process_form(request, form, resort_list)
@@ -70,14 +66,21 @@ def index(request):
             return render(request, 'resorthub/index.html', {'form': form, 'supported_resorts': resort_list})
 
     else:
-        form = UserAddressForm() 
+        if request.user.is_authenticated():
+            address = request.user.address
+            pass_type = request.user.pass_type
+        else:
+            address = 'Let\'s go!'
+            pass_type = "NON"
+
+        form = UserAddressForm(pass_type = pass_type, starting_from=address) 
         return render(request, 'resorthub/index.html', {'form': form, 'supported_resorts': resort_list})
 
 
 def process_form(request, form, resort_list):
     address = form.cleaned_data['user_address']
     date = form.cleaned_data['search_date']
-    pass_info = form.cleaned_data['pass_info'][0]
+    pass_info = form.cleaned_data['pass_type'][0]
     sort_opt = form.cleaned_data['sort_opt']
             
     filtered_resort_list = Resort.objects.filter(available_passes__contains=pass_info).order_by('name')
