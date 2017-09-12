@@ -1,0 +1,46 @@
+{% extends "skidom_base.html" %}
+{% load resort_filters %}
+{% load widget_tweaks %}
+
+
+{% block content %}
+
+<div class="supres">
+    {% if supported_resorts %}
+       <p> <h2> Recommended for you: </h2> </p>   
+ 
+        <table>
+            <thead>
+                <tr class="d0">
+                <th>Resort</th>
+                <th>Address</th>
+                <th>Distance</th>
+                <th>Driving Time</th>
+                <th>Base temp</th>
+                <th>Trails open</th>
+                <th>24 hr Snow</th>
+                </tr> 
+            </thead>
+            <tbody>
+            {% for resort in supported_resorts %}
+                    <tr>
+                    <td class="general"><a href="{{ resort.web_home }}">{{ resort.name  }}</a></td>
+                    <td class="address">{{  resort.address }}</td>
+                    <td class="onehun">{{ distances|use_index:forloop.counter0  }}</td>
+                    <td class="general">{{ times|use_index:forloop.counter0 }}</td>
+                    <td class="onehun">{{ base_temps|use_index:forloop.counter0 }}</td>
+                    <td class="onehun">{{ trails_open|use_index:forloop.counter0    }}</td>
+                    <td class="onehun">{{ new_snow|use_index:forloop.counter0 }}</td> 
+            {% endfor %}
+            </tbody>
+        </table>            
+
+
+
+    {% else %}
+        <p>We currently don't support any resorts. Sadness!</p>
+
+    {% endif %}
+</div>
+
+{% endblock %}

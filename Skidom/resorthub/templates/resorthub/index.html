@@ -1,66 +1,62 @@
 {% extends "skidom_base.html" %}
 {% load resort_filters %}
 {% load widget_tweaks %}
-
+{% load static %}
 
 {% block content %}
 
 <div class="getinfo">
-    <form action="{% url 'resorthub:index' %}" method="post"> 
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="Let's go skiing!!!"/>
-    </form>
+    <div class="shared">
+        <h2>Let's start planning an epic trip!</h2>
+        <form action="{% url 'resorthub:index' %}" method="post"> 
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" value="See resorts"/>
+        </form>
 
-    {% if invalid_address %}
-        <p> Please enter a valid address! </p>
-    {% endif %}
+        {% if invalid_address %}
+            <p> Please enter a valid address! </p>
+        {% endif %}
 
-    {% if no_match %}
-        <p> No resorts match your criteria. Please try a different search! </p>
-    {% endif %}
+        {% if no_match %}
+            <p> No resorts match your criteria. Please try a different search! </p>
+        {% endif %}
 
-    {% if address %}
-        <p> You will start at address <span class="userinfo">{{ address }} </span> and ski on <span class="userinfo"> {{ date }} </span>.</p>
-    {% else %}
-        <p> Please put in a starting address and what day you want to ski. </p>
-    {% endif %}
-</div>
+        {% if address %}
+            <p> You will start at address <span class="userinfo">{{ address }} </span> and ski on <span class="userinfo"> {{ date }} </span>.</p>
+        {% endif %}
+    </div>
+    <div class="shared"> 
+        <img src="{% static 'resorthub/images/0_index_pic.png' %}"> 
+    </div>
+</div> 
 
+<br><br>
 <div class="supres">
     {% if supported_resorts %}
-        <p> We currently support the following resorts: </p>
-    
+       <p> <h2> Where we'd ski this weekend: </h2> </p>   
+ 
         <table>
-            <tr class="d0">
-                <td>Resort</td>
-                <td>Address</td>
-                <td>Distance (mi)</td>
-                <td>Travel time</td>
-                <td>Base temp</td>
-                <td>Trails open</td>
-            </tr>
+            <theader>
+                <tr>
+                    <th>Resort</th>
+                    <th>State</th>
+                    <th>Base temp</th>
+                    <th>Trails open</th>
+                    <th>Amount of snow</th>
+                </tr>
+            </theader>
 
             {% for resort in supported_resorts %}
                 <tr>
-                    <td class="name">{{ resort.name  }}</td>
-                    <td class="address">{{ resort.address }}</td>
- 
-                {% if distances %}
-                    <td class="dist">{{ distances|use_index:forloop.counter0  }}</td>
-                    <td class="general">{{ times|use_index:forloop.counter0 }}</td>
-                    <td class="general">{{ temps|use_index:forloop.counter0 }}</td>
-                {% else %}         
-                    <td class="dist">N/A</td>
-                    <td class="general">N/A</td>
-                {% endif %}
-                    <td class="general">{{resort.trail}}</td>
-                    <td class="general">N/A</td>
-                </tr>
+                    <td class="name"><a href="{{ resort.web_home }}">{{ resort.name  }}</a></td>
+                    <td class="twohun">{{  resort.address.locality.state.name }}</td>
+                    <td class="general">{{ base_temps|use_index:forloop.counter0 }}</td>
+                    <td class="general">{{ trails_open|use_index:forloop.counter0    }}</td>
+                    <td class="general">{{ new_snow|use_index:forloop.counter0 }}</td> 
             {% endfor %}
         </table>            
 
-        <p> And more are on the way soon! </p> 
 
 
     {% else %}

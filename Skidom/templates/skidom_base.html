@@ -1,7 +1,6 @@
 {% load static %}
 
 <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}" />
-
 <div class="skihead">
     <span><h1> Skidom </h1></span>
 
@@ -18,13 +17,10 @@
     <span class ="link"><a href="{% url 'resorthub:resorts' %}">Resorts</a></span>      
     <span class ="link"><a href="{% url 'resorthub:index' %}"> Home </a></span>
 </div>
-    
 {% if messages %}
-  <ul class="messages">
   {% for message in messages %}
       <li> {{ message }} </li>
   {% endfor %}
-  </ul>
 {% endif %}
 
 {% block content %}
