@@ -14,7 +14,8 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 
-#Libraries for distancce/time estimates
+#Libraries for distance/time estimates
+from django.contrib.gis.utils import GeoIP
 import googlemaps
 import json
 
@@ -32,6 +33,16 @@ def resort_listing(request):
         selected_resort_ids = request.POST.getlist('choices[]')
         selected_resorts = Resort.objects.filter(pk__in=selected_resort_ids)
         if ("compare" in request.POST.keys()):
+                if request.user.is_authenticated() and request.user.address != "":
+                    starting_address = request.user.address
+                else:
+                    g = GeoIP()
+                    ip = request.META.get('REMOTE_ADDR', None)
+                    if ip:
+                        starting_address = g.city(ip)['city']
+                    else:
+                        starting_address = "Boston MA"
+
                return render(request, 'resorthub/compare.html', {'resorts': selected_resorts})
  
         elif ("favorite" in request.POST):
@@ -44,6 +55,8 @@ def resort_listing(request):
                 return redirect("/usersettings/profile/")
                 
     else:
+        print(request.user.address)
+        print(request.user.address == "")
         resort_list = Resort.objects.order_by('name')
         return render(request, 'resorthub/resorts.html', {'resorts': resort_list})
 

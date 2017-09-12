@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.gis.utils',
     'polls.apps.PollsConfig',
     'resorthub.apps.ResorthubConfig',
     'usersettings.apps.UsersettingsConfig',
