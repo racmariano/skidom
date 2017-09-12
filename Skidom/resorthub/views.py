@@ -69,9 +69,9 @@ def get_top_five_resorts(resort_list, filter_on='num_open'):
     resort_info = zip(resort_list, base_temps, num_open, new_snow)    
 
     if filter_on == 'num_open':
-        resort_info.sort(key = lambda t: t[1])
+        resort_info.sort(key = lambda t: t[1], reverse=True)
     else:
-        resort_info.sort(key = lambda t: t[2])
+        resort_info.sort(key = lambda t: t[2], reverse=True)
 
     if len(resort_info) >= 5:
         end = 5
@@ -216,14 +216,14 @@ def time_order(resort_info):
     for resort in resort_info:
         time_in_minutes = 0
         google_time = resort[2]
-    
+
         if 'day' in google_time:
             parsed_time = re.split('day[s]? ', google_time)
             time_in_minutes += 1440*int(parsed_time[0])
             google_time = parsed_time[1]
 
         if 'hour' in google_time:
-            parsed_time = re.split('hour[s]? ', google_time)
+            parsed_time = re.split('hour[s]?', google_time)
             time_in_minutes += 60*int(parsed_time[0]) 
             google_time = parsed_time[1]    
 
