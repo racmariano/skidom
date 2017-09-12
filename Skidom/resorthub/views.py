@@ -38,12 +38,22 @@ def resort_listing(request):
                 else:
                     g = GeoIP2()
                     ip = request.META.get('REMOTE_ADDR', None)
-                    if ip:
-                        starting_address = g.city(ip)['city']
-                    else:
-                        starting_address = "Boston MA"
 
-                return render(request, 'resorthub/compare.html', {'resorts': selected_resorts})
+                    if ip:
+                        try:
+                            geoip_city = g.city(ip)
+                            starting_address = geoip_city['city']
+                        except:
+                            starting_address = "Boston MA"
+
+                resort_addresses = [x.address.raw for x in selected_resorts] 
+                clean_dists, clean_times = use_googlemaps(starting_address, resort_addresses)
+
+                return render(request, 'resorthub/compare.html', {
+                    'resorts': selected_resorts,
+                    'distances': clean_dists,
+                    'times': clean_times,
+                })
  
         elif ("favorite" in request.POST):
             if not request.user.is_authenticated():
