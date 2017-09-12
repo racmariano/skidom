@@ -8,6 +8,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.views import generic, View
 from django.contrib import messages  
+from django.core.exceptions import ObjectDoesNotExist
 
 #Libraries for user support
 from django.contrib.auth import login, authenticate
@@ -63,13 +64,38 @@ def compare_listing(request, resort_list=Resort.objects.all()):
 
 
 #RESORT HUB METHODS!!!!
+def get_top_five_resorts(resort_list, filter_on='num_open'):
+    resort_list, base_temps, num_open, new_snow = get_scraped_info(resort_list)
+    resort_info = zip(resort_list, base_temps, num_open, new_snow)    
+
+    if filter_on == 'num_open':
+        resort_info.sort(key = lambda t: t[1])
+    else:
+        resort_info.sort(key = lambda t: t[2])
+
+    if len(resort_info) >= 5:
+        end = 5
+    else:
+        end = len(resort_list)
+
+    return(zip(*resort_info[0:end]))
+
 def get_scraped_info(resort_list):
-    trail_pages = [TrailPage.objects.get(resort=t.id) for t in resort_list]
+    trail_pages = []
+    valid_resorts = []
+
+    for resort in resort_list:
+        try:
+            trail_pages.append(TrailPage.objects.get(resort=resort))
+            valid_resorts.append(resort)
+        except ObjectDoesNotExist:
+            pass
+
     base_temps = [str(int(t.base_temp))+"° F" for t in trail_pages]
     num_open = [t.num_open for t in  trail_pages]
     new_snow =  [t.new_snow for t in trail_pages]
 
-    return(base_temps, num_open, new_snow)
+    return(valid_resorts, base_temps, num_open, new_snow)
 
 def index(request):
     resort_list = Resort.objects.all() 
@@ -86,20 +112,21 @@ def index(request):
 
     else:
         header_message = "Where we\'d ski this weekend:"
-        resort_list = Resort.objects.filter(pk__lte=10).exclude(url__exact='').order_by('name')
+        resort_list = Resort.objects.exclude(url__exact='')
 
         if request.user.is_authenticated():
             address = request.user.address
             pass_type = request.user.pass_type            
             if len(request.user.favorite_resorts.all()) > 0:
-                header_message = "What's up with your favorite resorts:"
-                resort_list = request.user.favorite_resorts.all().order_by('name')
+                header_message = "What\'s up with your favorite resorts:"
+                resort_list = request.user.favorite_resorts.all()
 
         else:
             address = 'Let\'s go!'
             pass_type = "NON"
 
-        base_temps, num_open, new_snow = get_scraped_info(resort_list)
+        resort_list, base_temps, num_open, new_snow = get_top_five_resorts(resort_list, filter_on="new_snow")
+
 
         form = UserAddressForm(pass_type = pass_type, starting_from=address) 
         return render(request, 'resorthub/index.html', {'form': form, 'header_message': header_message, 'supported_resorts': resort_list, 'base_temps': base_temps, 'trails_open': num_open, 'new_snow': new_snow})
@@ -110,11 +137,9 @@ def process_form(request, form, resort_list):
     date = form.cleaned_data['search_date']
     pass_info = form.cleaned_data['pass_type'][0]
     sort_opt = form.cleaned_data['sort_opt']
-    print(pass_info)
 
     #If we haven't made a crawler page, the url will be blank            
-    filtered_resort_list = Resort.objects.filter(pk__lte=10, available_passes__contains=pass_info).exclude(url__exact='').order_by('name')
-    print(filtered_resort_list.all())
+    filtered_resort_list = Resort.objects.filter(available_passes__contains=pass_info).exclude(url__exact='').order_by('name')
 
     if not filtered_resort_list:
         return({'no_match': 1, 'form': form, 'supported_resorts': resort_list})
@@ -152,8 +177,12 @@ def use_googlemaps(address, resort_addresses):
     return(clean_map_dists, clean_map_times)
 
 def order_resorts(sort_opt, filtered_resort_list, clean_dists, clean_times):
-    base_temps, num_open, new_snow = get_scraped_info(filtered_resort_list)
+    filtered_resort_list, base_temps, num_open, new_snow = get_scraped_info(filtered_resort_list)
     resort_info = zip(filtered_resort_list, clean_dists, clean_times, base_temps, num_open, new_snow)
+
+    #We want resorts with most snow, trails, warmest, etc. 
+    #However, we want resorts with shortest times
+    descending_order = 1
     
     if sort_opt == "ABC":
         return(resort_info)    
@@ -163,13 +192,18 @@ def order_resorts(sort_opt, filtered_resort_list, clean_dists, clean_times):
 
     elif sort_opt == "DIS":
         i = 1
-        flag = 0
+        descending_order = 0
 
     elif sort_opt == "WEA":
         i = 3
-        flag = 1
 
-    resort_info.sort(key = lambda t: t[i], reverse=flag)
+    elif sort_opt == "TRA":
+        i = 4
+
+    elif sort_opt == "SNO":
+        i = 5
+
+    resort_info.sort(key = lambda t: t[i], reverse=descending_order)
 
     return(resort_info) 
 
