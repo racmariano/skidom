@@ -18,7 +18,6 @@ from django.conf.urls import include, url
 from django.contrib import admin
 
 urlpatterns = [
-    url(r'^polls/', include('polls.urls')),
     url(r'^resorthub/', include('resorthub.urls')),
     url(r'^usersettings/', include('usersettings.urls')),
     url(r'^admin/', admin.site.urls), 

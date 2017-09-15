@@ -38,7 +38,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.gis.geoip2',
-    'polls.apps.PollsConfig',
     'resorthub.apps.ResorthubConfig',
     'usersettings.apps.UsersettingsConfig',
     'multiselectfield',
