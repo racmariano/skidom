@@ -12,7 +12,7 @@
 import os
 
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "Skidom.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "skidom.settings")
 
 BOT_NAME = 'resorthub'
 
