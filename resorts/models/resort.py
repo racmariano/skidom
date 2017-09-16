@@ -34,3 +34,11 @@ class Resort(models.Model):
     def __str__(self):
         return self.name
 
+class Conditions(models.Model):
+    resort = models.OneToOneField(Resort)
+    base_temp = models.DecimalField(max_digits = 6, decimal_places = 2, default = 0)
+    summit_temp = models.DecimalField(max_digits = 6, decimal_places = 2, default = 0)
+
+    class Meta:
+        verbose_name_plural = "Conditions"
+
