@@ -14,7 +14,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.contrib.auth.forms import UserCreationForm
 
-from resorthub.models import Resort, UserProfile
+from resorthub.models import UserProfile
 from .forms import CustomUserCreationForm, EditProfileForm
 
 

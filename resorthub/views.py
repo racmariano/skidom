@@ -21,7 +21,7 @@ import googlemaps
 import json
 
 #Import Objects
-from .models import Resort, TrailPage
+from .models import OldResort, TrailPage
 from .forms import UserAddressForm, CompareOrFavoriteForm
 
 #Global variables
@@ -32,7 +32,7 @@ gmaps = googlemaps.Client(key='AIzaSyBRrCgnGFkdRY-Z1hX6xaxoUFBczNI2664')
 def resort_listing(request):
     if request.method == 'POST':
         selected_resort_ids = request.POST.getlist('choices[]')
-        selected_resorts = Resort.objects.filter(pk__in=selected_resort_ids)
+        selected_resorts = OldResort.objects.filter(pk__in=selected_resort_ids)
         if ("compare" in request.POST.keys()):
                 if request.user.is_authenticated() and request.user.address != "":
                     starting_address = request.user.address
@@ -66,10 +66,10 @@ def resort_listing(request):
                 return redirect("/usersettings/profile/")
                 
     else:
-        resort_list = Resort.objects.order_by('name')
+        resort_list = OldResort.objects.order_by('name')
         return render(request, 'resorthub/resorts.html', {'resorts': resort_list})
 
-def compare_listing(request, resort_list=Resort.objects.all()):
+def compare_listing(request, resort_list=OldResort.objects.all()):
         return render(request, 'resorthub/compare.html', {'resorts': resort_list})
 
 
@@ -108,7 +108,7 @@ def get_scraped_info(resort_list):
     return(valid_resorts, base_temps, num_open, new_snow)
 
 def index(request):
-    resort_list = Resort.objects.all() 
+    resort_list = OldResort.objects.all() 
     if request.method == 'POST':
         form = UserAddressForm(request.POST, pass_type = request.POST['pass_type'], starting_from = request.POST['user_address'])
 
@@ -122,7 +122,7 @@ def index(request):
 
     else:
         header_message = "Where we\'d ski this weekend:"
-        resort_list = Resort.objects.exclude(url__exact='')
+        resort_list = OldResort.objects.exclude(url__exact='')
 
         if request.user.is_authenticated():
             address = request.user.address
@@ -149,7 +149,7 @@ def process_form(request, form, resort_list):
     sort_opt = form.cleaned_data['sort_opt']
 
     #If we haven't made a crawler page, the url will be blank            
-    filtered_resort_list = Resort.objects.filter(available_passes__contains=pass_info).exclude(url__exact='').order_by('name')
+    filtered_resort_list = OldResort.objects.filter(available_passes__contains=pass_info).exclude(url__exact='').order_by('name')
 
     if not filtered_resort_list:
         return({'no_match': 1, 'form': form, 'supported_resorts': resort_list})

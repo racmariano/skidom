@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.gis.geoip2',
     'resorthub.apps.ResorthubConfig',
     'usersettings.apps.UsersettingsConfig',
+    'resorts.apps.ResortsConfig',
     'multiselectfield',
     'address',
     'dynamic_scraper',
@@ -82,8 +83,12 @@ WSGI_APPLICATION = 'skidom.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'skidom',
+        'USER': 'postgres',
+        'PASSWORD': 'password',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
