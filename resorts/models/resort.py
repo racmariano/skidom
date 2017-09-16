@@ -1,10 +1,15 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 from django.db import models
+
+from address.models import AddressField
 
 # Basic resort model
 class Resort(models.Model):
 
     # Basic resort information
-    name = models.CharField(max_length=200, default = '')
+    name = models.CharField(max_length=50, default = '')
     address = AddressField(blank = True)
     website = models.URLField(default = '')
 
@@ -28,4 +33,12 @@ class Resort(models.Model):
 
     def __str__(self):
         return self.name
+
+class Conditions(models.Model):
+    resort = models.OneToOneField(Resort)
+    base_temp = models.DecimalField(max_digits = 6, decimal_places = 2, default = 0)
+    summit_temp = models.DecimalField(max_digits = 6, decimal_places = 2, default = 0)
+
+    class Meta:
+        verbose_name_plural = "Conditions"
 

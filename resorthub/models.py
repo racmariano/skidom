@@ -24,7 +24,7 @@ PASS_CHOICES = (("NON", "None"),
                 ("ROC", "Rocky Mountain Super Pass"))
 
 # Basic resort model
-class Resort(models.Model):
+class OldResort(models.Model):
 
     # Basic resort information
     name = models.CharField(max_length=200, default = "")
@@ -75,7 +75,7 @@ class Resort(models.Model):
 # Ski website model for scraping
 class TrailPage(models.Model):
 
-    resort = models.ForeignKey(Resort, null = True, default=4)
+    resort = models.ForeignKey(OldResort, null = True, default=4)
     url = models.URLField(blank=True)
 
     num_open = models.IntegerField(default = 999)
@@ -111,7 +111,7 @@ class UserProfile(AbstractUser):
                      ("GL", "Glades"))
         
     favorite_runs = MultiSelectField(choices = RUN_CHOICES, default = "BE")
-    favorite_resorts = models.ManyToManyField(Resort, null = True, blank = True)    
+    favorite_resorts = models.ManyToManyField(OldResort, null = True, blank = True)    
 
     pass_type = models.CharField(max_length = 20, choices = PASS_CHOICES, default = "NON")
     own_equipment = models.BooleanField(default = False) 
