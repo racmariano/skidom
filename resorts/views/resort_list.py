@@ -6,8 +6,7 @@ from collections import defaultdict
 from django.core.exceptions import ObjectDoesNotExist
 
 #Import Resort and ConditionsReport models
-from ..models import Resort
-from ...resorthub.models import TrailPage
+from ..models import Resort, Conditions
 
 #Imports for using Google Maps
 import googlemaps
@@ -17,13 +16,13 @@ import json
 GMAPS = googlemaps.Client(key='AIzaSyBRrCgnGFkdRY-Z1hX6xaxoUFBczNI2664')
 
 
-def resort_list(user_address, selected_resorts, number_to_display=5, order_on='snow_in_past_24h'):
+def get_resort_list(user_address, selected_resorts, number_to_display=5, order_on='snow_in_past_24h'):
 #Given a user address and selected resorts, return an ordered list of resorts for display
 #We first use the Google Maps API to get distances and driving times for the journey between the user and the resorts
 #We then use our scraped objects to get the 24 hr snow fall, temperatures at the mountain base, and number of trails open
 #Finally, we return the sorted information as a list of tuples
 
-    resorts_info = defaultdict()
+    resorts_info = defaultdict(dict)
     use_googlemaps(user_address, selected_resorts, resorts_info)
     get_conditions(selected_resorts, resorts_info) 
     return(order_resorts(resorts_info, number_to_display, order_on))
@@ -42,9 +41,9 @@ def use_googlemaps(address, selected_resorts, resorts_info):
         json_map = GMAPS.distance_matrix(origins = address, destinations = resort.address.raw, mode = "driving", units = "imperial")
 
         try:
-            dist = float(json_map['rows'][0]['elements'][i]['distance']['text'][:-3].replace(',', ''))
-            time_in_seconds = json_map['rows'][0]['elements'][i]['duration']['value']
-            text_time = json_map['rows'][0]['elements'][i]['duration']['text']    
+            dist = float(json_map['rows'][0]['elements'][0]['distance']['text'][:-3].replace(',', ''))
+            time_in_seconds = json_map['rows'][0]['elements'][0]['duration']['value']
+            text_time = json_map['rows'][0]['elements'][0]['duration']['text']    
     
         except KeyError:
             dist = "N/A"
@@ -62,8 +61,8 @@ def get_conditions(resort_list, resorts_info):
 
     for resort in resort_list:
         try:
-            t = TrailPage.objects.get(resort=resort))
-            base_temp = str(int(t.base_temp))+"° F")
+            t = Conditions.objects.get(resort=resort)
+            base_temp = str(int(t.base_temp))+"° F"
             num_trails_open = t.num_open
             snow_in_past_24h = t.new_snow            
 
@@ -88,12 +87,12 @@ def order_resorts(resorts_info, number_to_display, order_on):
     if order_on == "alphabet":
         keys = sorted(resorts_info)        
 
-    elif order_on is in ['time_in_seconds', 'distance']:
+    elif order_on in ['time_in_seconds', 'distance']:
             decreasing_flag = 0
 
     keys = sorted(resorts_info, key = lambda x: resorts_info[x][order_on], reverse = decreasing_flag)
 
-    for i in range(number_to_display-1):
+    for i in range(min(number_to_display, len(keys))):
         list_of_ordered_resorts.append((keys[i], resorts_info[keys[i]]))
     
     return(list_of_ordered_resorts) 
