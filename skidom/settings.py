@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.gis.geoip2',
     'resorthub.apps.ResorthubConfig',
     'usersettings.apps.UsersettingsConfig',
+    'resorts.apps.ResortsConfig',
     'multiselectfield',
     'address',
     'dynamic_scraper',

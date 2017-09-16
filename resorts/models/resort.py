@@ -1,10 +1,15 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 from django.db import models
+
+from address.models import AddressField
 
 # Basic resort model
 class Resort(models.Model):
 
     # Basic resort information
-    name = models.CharField(max_length=200, default = '')
+    name = models.CharField(max_length=50, default = '')
     address = AddressField(blank = True)
     website = models.URLField(default = '')
 
