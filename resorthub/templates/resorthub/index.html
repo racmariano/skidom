@@ -13,25 +13,18 @@
             {{ form.as_p }}
             <input type="submit" value="See resorts"/>
         </form>
-
-        {% if invalid_address %}
-            <p> Please enter a valid address! </p>
-        {% endif %}
-
-        {% if no_match %}
-            <p> No resorts match your criteria. Please try a different search! </p>
-        {% endif %}
     </div>
+
     <div class="shared"> 
         <img src="{% static 'resorthub/images/0_index_pic.png' %}"> 
     </div>
 </div> 
 
 <br><br>
+
 <div class="supres">
     {% if supported_resorts %}
-       <p> <h2> {{ header_message }} </h2> </p>   
- 
+        <p><h2> {{ header_message }} </h2></p>   
         <table>
             <theader>
                 <tr>
@@ -45,18 +38,16 @@
 
             {% for resort in supported_resorts %}
                 <tr>
-                    <td class="name"><a href="{{ resort.web_home }}">{{ resort.name  }}</a></td>
-                    <td class="twohun">{{  resort.address.locality.state.name }}</td>
-                    <td class="general">{{ base_temps|use_index:forloop.counter0 }}</td>
-                    <td class="general">{{ trails_open|use_index:forloop.counter0    }}</td>
-                    <td class="general">{{ new_snow|use_index:forloop.counter0 }}</td> 
+                    <td class="name"><a href="{{ resort.website }}">{{ resort.name  }}</a></td>
+                    <td class="twohun">{{  resort.state }}</td>
+                    <td class="general">{{ resort.base_temp }}</td>
+                    <td class="general">{{ resort.num_trails_open  }}</td>
+                    <td class="general">{{ resort.snow_in_past_24h }}</td> 
             {% endfor %}
         </table>            
 
-
-
     {% else %}
-        <p>We currently don't support any resorts. Sadness!</p>
+        <p>No resorts matching your criteria are available. Please try again!</p>
 
     {% endif %}
 </div>

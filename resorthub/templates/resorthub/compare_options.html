@@ -24,13 +24,13 @@
             <tbody>
             {% for resort in supported_resorts %}
                     <tr>
-                    <td class="general"><a href="{{ resort.web_home }}">{{ resort.name  }}</a></td>
+                    <td class="general"><a href="{{ resort.website }}">{{ resort.name  }}</a></td>
                     <td class="address">{{  resort.address }}</td>
-                    <td class="onehun">{{ distances|use_index:forloop.counter0  }}</td>
-                    <td class="general">{{ times|use_index:forloop.counter0 }}</td>
-                    <td class="onehun">{{ base_temps|use_index:forloop.counter0 }}</td>
-                    <td class="onehun">{{ trails_open|use_index:forloop.counter0    }}</td>
-                    <td class="onehun">{{ new_snow|use_index:forloop.counter0 }}</td> 
+                    <td class="onehun">{{ resort.distance  }}</td>
+                    <td class="general">{{ resort.text_time }}</td>
+                    <td class="onehun">{{ resort.base_temp }}</td>
+                    <td class="onehun">{{ resort.num_trails_open }}</td>
+                    <td class="onehun">{{ resort.snow_in_past_24h }}</td> 
             {% endfor %}
             </tbody>
         </table>            
@@ -38,7 +38,7 @@
 
 
     {% else %}
-        <p>We currently don't support any resorts. Sadness!</p>
+        <p>No resorts match your criteria. Please try again!</p>
 
     {% endif %}
 </div>

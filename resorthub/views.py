@@ -10,15 +10,12 @@ from django.views import generic, View
 from django.contrib import messages  
 from django.core.exceptions import ObjectDoesNotExist
 
-# Libraries for user support
-from django.contrib.auth import login, authenticate
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import UserCreationForm
-
 # Import Objects
 from .models import OldResort, TrailPage
 from .forms import UserAddressForm, CompareOrFavoriteForm
 
+# Import get_resort_list function for resort display
+from resorts.views.resort_list import get_resort_list
 
 def index(request):
     """ Home page for Skidom.
@@ -46,7 +43,7 @@ def index(request):
 
         if form.is_valid():
             resorts_list = process_form(request, form)
-            return render(request, 'resorthub/compare_options.html', resorts_list)
+            return render(request, 'resorthub/compare_options.html', {'resorts_list': resorts_list})
 
     else:
         header_message = "Where we\'d ski this weekend:"
@@ -62,7 +59,7 @@ def index(request):
             address = 'Let\'s go!'
             pass_type = "NON"
 
-        resorts_list = get_resort_list(resorts_list, filter_on="new_snow")
+        resorts_list = get_resort_list(resorts_list, order_on = 'snow_in_past_24h')
         form = UserAddressForm(pass_type = pass_type, starting_from=address)
  
         return render(request, 'resorthub/index.html', {'form': form, 'header_message': header_message, 'supported_resorts': resorts_list})
@@ -89,31 +86,48 @@ def process_form(request, form):
     if not filtered_resort_list:
         return([])
 
-    return(get_resort_list(filtered_resort_list, user_address = address, number_to_display = len(filtered_resort_list), order_on = sort_opt)
+    return(get_resort_list(filtered_resort_list, user_address = address, number_to_display = len(filtered_resort_list), order_on = sort_opt))
 
 
 def resort_listing(request):
+    """ Form page for either comparing selected resorts or adding them to the user's favorites.
+
+    On a GET request, displays all available resorts and their relevant information. There are two
+    buttons a user can use to make a POST request: shortly either 'favorite' or 'compare.'
+
+    On a POST request, if 'favorite' selected: if user not authenticated, the user is redirected to login page. If the 
+    user is authenticated, selected resorts are added to user favorites, and the user is redirected
+    to their profile. Elif 'compare' selected: selected resort information acquired, and information rendered
+    to comparison template.
+
+    Args:
+        request (request): Page request
+
+    Returns:
+        redirect or render based on criteria above. 
+
+    """
     if request.method == 'POST':
         selected_resort_ids = request.POST.getlist('choices[]')
         selected_resorts = OldResort.objects.filter(pk__in=selected_resort_ids)
+
         if ("compare" in request.POST.keys()):
                 if request.user.is_authenticated() and request.user.address != "":
                     starting_address = request.user.address
+
                 else:
+        #We use to have GeoIP2 here to guess the starting address based on the user's IP.
+        #Until we can find a way to make this work on heroku, use Boston as a start.
                     starting_address = "Boston MA"
 
-                resort_addresses = [x.address.raw for x in selected_resorts] 
-                clean_dists, clean_times = use_googlemaps(starting_address, resort_addresses)
+                resorts_list = get_resort_list(selected_resorts, user_address = starting_address, number_to_display = len(selected_resorts))
 
-                return render(request, 'resorthub/compare.html', {
-                    'resorts': selected_resorts,
-                    'distances': clean_dists,
-                    'times': clean_times,
-                })
+                return render(request, 'resorthub/compare.html', {'resorts_list': resorts_list})
  
-        elif ("favorite" in request.POST):
+        elif ("favorite" in request.POST.keys()):
             if not request.user.is_authenticated():
                 return redirect("/accounts/login/")
+
             else:
                 request.user.favorite_resorts.add(*selected_resorts)
                 request.user.save()
@@ -122,9 +136,18 @@ def resort_listing(request):
                 
     else:
         resort_list = OldResort.objects.order_by('name')
-        return render(request, 'resorthub/resorts.html', {'resorts': resort_list})
-
-def compare_listing(request, resort_list=OldResort.objects.all()):
-        return render(request, 'resorthub/compare.html', {'resorts': resort_list})
+        return render(request, 'resorthub/resorts.html', {'resorts_list': resorts_list})
 
 
+def compare_listing(request, resorts_list=[]):
+    """ View for comparison page.
+
+    Args:
+        request: Page request
+        resorts_list: List of Resort dictionaries
+
+    Returns:
+        render: Renders resorts_list to comparison template
+
+    """
+    return render(request, 'resorthub/compare.html', {'resorts_list': resorts_list})

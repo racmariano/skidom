@@ -5,8 +5,11 @@ from __future__ import unicode_literals
 from collections import defaultdict
 from django.core.exceptions import ObjectDoesNotExist
 
-# Import Resort and ConditionsReport models
+# Import Resort and Conditions models
 from ..models import Resort, Conditions
+
+# Import TrailPage for testing
+from resorthub.models import TrailPage
 
 # Imports for using Google Maps
 import googlemaps
@@ -34,17 +37,39 @@ def get_resort_list(selected_resorts, user_address = "", number_to_display = NUM
         list: List of Resort dictionaries with name, id, condition information, and optional driving information
 
     """
-    resorts_list = [x for x in selected_resorts.values('name', 'id')]
+    resorts_list = queryset_to_resort_dictionary(selected_resorts)
+
 
     if user_address != "":
-        use_googlemaps(user_address, selected_resorts, resorts_list)
+        use_googlemaps(user_address, resorts_list)
 
     get_conditions(resorts_list) 
 
     return(order_resorts(resorts_list, number_to_display, order_on))
 
+def queryset_to_resort_dictionary(selected_resorts):
+    """ Gets needed ID, address, and website information from Resort models and returns
+    list of Resort dictionaries.
+    
+    Args:
+        selected_resorts (queryset): Queryset of Resorts        
 
-def use_googlemaps(address, selected_resorts, resorts_list):
+    Returns:
+        list: List of Resort dictionaries with name and id information
+
+    """
+
+    resorts_list = [x for x in selected_resorts.values('id', 'name', 'web_home')]
+
+    for resort in resorts_list:
+        resort_object = selected_resorts.get(pk=resort['id'])
+        resort['state'] = resort_object.address.locality.state.name
+        resort['address'] = resort_object.address
+        resort['our_take'] = resort_object.our_take
+
+    return(resorts_list)
+
+def use_googlemaps(address, resorts_list):
     """ We use the Google Maps API to get driving distances and times for the user.
     
     Google Maps returns a JSON response that we must parse.
@@ -54,7 +79,6 @@ def use_googlemaps(address, selected_resorts, resorts_list):
 
     Args:
         address (str): User address
-        selected_resorts (queryset): Queryset of Resorts
         resorts_list (list): List of Resort dictionaries
 
     Returns:
@@ -63,7 +87,7 @@ def use_googlemaps(address, selected_resorts, resorts_list):
 
     """ 
     for resort in resorts_list:
-        json_map = GMAPS.distance_matrix(origins = address, destinations = selected_resorts.get(name=resort['name']).address.raw, mode = "driving", units = "imperial")
+        json_map = GMAPS.distance_matrix(origins = address, destinations = resort['address'], mode = "driving", units = "imperial")
 
         try:
             # We grab the distance, chop off the trailing units using [:-3], and get rid of commas.
@@ -97,7 +121,7 @@ def get_conditions(resorts_list):
     """
     for resort in resorts_list:
         try:
-            t = Conditions.objects.get(resort=resort['id'])
+            t = TrailPage.objects.get(resort=resort['id'])
             base_temp = str(int(t.base_temp))+"° F"
             num_trails_open = t.num_open
             snow_in_past_24h = t.new_snow            
