@@ -45,7 +45,6 @@ INSTALLED_APPS = [
     'multiselectfield',
     'address',
     'dynamic_scraper',
-    'widget_tweaks'
 ]
 
 MIDDLEWARE = [
