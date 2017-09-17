@@ -16,7 +16,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 
 #Libraries for distance/time estimates
-from django.contrib.gis.geoip2 import GeoIP2
+import geoip2.database
 import googlemaps
 import json
 
@@ -42,6 +42,7 @@ def resort_listing(request):
 
                     if ip:
                         try:
+                            g = geoip2.database.reader('static/geoip_city/GeoLite2-City.mmdb')
                             geoip_city = g.city(ip)
                             starting_address = geoip_city['city']
                         except:

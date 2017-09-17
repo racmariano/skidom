@@ -158,3 +158,6 @@ DATABASES['default'].update(db_from_env)
 
 #Heroku static file serving
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+
+#Maxmind key for making Heroku happy
+MAXMIND_KEY = 000000
