@@ -16,7 +16,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 
 #Libraries for distance/time estimates
-import geoip2.database
 import googlemaps
 import json
 
@@ -37,16 +36,7 @@ def resort_listing(request):
                 if request.user.is_authenticated() and request.user.address != "":
                     starting_address = request.user.address
                 else:
-                    g = GeoIP2()
-                    ip = request.META.get('REMOTE_ADDR', None)
-
-                    if ip:
-                        try:
-                            g = geoip2.database.reader('static/geoip_city/GeoLite2-City.mmdb')
-                            geoip_city = g.city(ip)
-                            starting_address = geoip_city['city']
-                        except:
-                            starting_address = "Boston MA"
+                    starting_address = "Boston MA"
 
                 resort_addresses = [x.address.raw for x in selected_resorts] 
                 clean_dists, clean_times = use_googlemaps(starting_address, resort_addresses)

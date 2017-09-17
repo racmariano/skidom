@@ -37,7 +37,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.gis.geoip2',
     'resorthub.apps.ResorthubConfig',
     'usersettings.apps.UsersettingsConfig',
     'resorts.apps.ResortsConfig',
@@ -149,6 +148,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 #Geoip path!
 GEOIP_PATH = os.path.join(BASE_DIR, 'static/geoip_city')
+MAXMIND_KEY = '8675309'
 
 #Database config for heroku deployment
 import dj_database_url
@@ -159,5 +159,3 @@ DATABASES['default'].update(db_from_env)
 #Heroku static file serving
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
-#Maxmind key for making Heroku happy
-MAXMIND_KEY = 000000
