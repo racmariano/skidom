@@ -8,7 +8,6 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.views import generic, View
 from django.contrib import messages  
-from django.core.exceptions import ObjectDoesNotExist
 
 # Import Objects
 from .models import OldResort, TrailPage
@@ -41,10 +40,14 @@ def index(request):
     if request.method == 'POST':
         form = UserAddressForm(request.POST, pass_type = request.POST['pass_type'], starting_from = request.POST['user_address'])
 
-
         if form.is_valid():
-            resorts_list = process_form(request, form)
-            return render(request, 'resorthub/compare_options.html', {'resorts_list': resorts_list})
+            if form.cleaned_data['user_address'] not in ["", "Let\'s go!"]:
+                resorts_list = process_form(form)
+                return render(request, 'resorthub/compare_options.html', {'resorts_list': resorts_list})
+
+            else:
+                messages.warning(request, "Please enter valid address!")
+                return redirect('/resorthub/')
 
     else:
         header_message = "Where we\'d ski this weekend:"
@@ -62,15 +65,13 @@ def index(request):
 
         resorts_list = get_resort_list(resorts_list, order_on = 'snow_in_past_24h')
         form = UserAddressForm(pass_type = pass_type, starting_from=address)
- 
         return render(request, 'resorthub/index.html', {'form': form, 'header_message': header_message, 'resorts_list': resorts_list})
 
 
-def process_form(request, form):
+def process_form(form):
     """ Processes trip information form to get resort list for display.
 
     Args:
-        request (request): Page request
         form (Form): Posted trip information form 
 
     Returns:
@@ -94,7 +95,8 @@ def resort_listing(request):
     """ Form page for either comparing selected resorts or adding them to the user's favorites.
 
     On a GET request, displays all available resorts and their relevant information. There are two
-    buttons a user can use to make a POST request: shortly either 'favorite' or 'compare.'
+    buttons a user can use to make a POST request: either 'favorite' or 'compare.' As the information
+    displayed is static, uses raw Resort objects. 
 
     On a POST request, if 'favorite' selected: if user not authenticated, the user is redirected to login page. If the 
     user is authenticated, selected resorts are added to user favorites, and the user is redirected
@@ -136,8 +138,8 @@ def resort_listing(request):
                 return redirect("/usersettings/profile/")
                 
     else:
-        resorts_list = OldResort.objects.order_by('name')
-        return render(request, 'resorthub/resorts.html', {'resorts_list': resorts_list})
+        resorts_objects_list = OldResort.objects.order_by('name')
+        return render(request, 'resorthub/resorts.html', {'resorts_list': resorts_objects_list})
 
 
 def compare_listing(request, resorts_list=[]):
