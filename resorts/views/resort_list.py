@@ -64,7 +64,7 @@ def queryset_to_resort_dictionary(selected_resorts):
     for resort in resorts_list:
         resort_object = selected_resorts.get(pk=resort['id'])
         resort['state'] = resort_object.address.locality.state.name
-        resort['address'] = resort_object.address
+        resort['address'] = resort_object.address.formatted
         resort['our_take'] = resort_object.our_take
 
     return(resorts_list)
@@ -97,9 +97,9 @@ def use_googlemaps(address, resorts_list):
             text_time = json_map['rows'][0]['elements'][0]['duration']['text']    
     
         except KeyError:
-            dist = "N/A"
-            time_in_seconds = "N/A"
-            text_time = "N/A"
+            dist = None
+            time_in_seconds = None
+            text_time = None
 
         resort['distance'] = dist 
         resort['time_in_seconds'] = time_in_seconds
@@ -127,9 +127,9 @@ def get_conditions(resorts_list):
             snow_in_past_24h = t.new_snow            
 
         except ObjectDoesNotExist:
-            base_temp = "N/A"
-            num_trails_open = "N/A"
-            snow_in_past_24h = "N/A"
+            base_temp = None
+            num_trails_open = None
+            snow_in_past_24h = None
 
         resort['base_temp'] = base_temp
         resort['num_trails_open'] = num_trails_open

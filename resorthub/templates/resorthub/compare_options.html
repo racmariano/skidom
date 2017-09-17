@@ -6,7 +6,7 @@
 {% block content %}
 
 <div class="compareresorts">
-    {% if supported_resorts %}
+    {% if resorts_list %}
        <p> <h2> Recommended for you: </h2> </p>   
  
         <table>
@@ -22,7 +22,7 @@
                 </tr> 
             </thead>
             <tbody>
-            {% for resort in supported_resorts %}
+            {% for resort in resorts_list %}
                     <tr>
                     <td class="general"><a href="{{ resort.website }}">{{ resort.name  }}</a></td>
                     <td class="address">{{  resort.address }}</td>

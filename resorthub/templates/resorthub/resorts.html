@@ -16,10 +16,10 @@
                 <th>Select</th>
             </tr>
         <theader>
-        {% for resort in resorts %}
+        {% for resort in resorts_list %}
             <tr>
-                <td class="name"><a href="{{ resort.website }}">{{ resort.name }}</a></td>
-                <td class="general"> {{ resort.state }} </td>
+                <td class="name"><a href="{{ resort.web_home }}">{{ resort.name }}</a></td>
+                <td class="general"> {{ resort.address.locality.state.name }} </td>
                 <td class="threehun"><a href="#" onclick='overlay("{{ resort.our_take }}")'>Our take: {{ resort.name }}</a></td>
                 <td class="general"><input type="checkbox" name="choices[]" id="{{resort.id}}" value={{resort.id}}></td>
             </tr>    

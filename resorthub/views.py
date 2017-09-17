@@ -41,6 +41,7 @@ def index(request):
     if request.method == 'POST':
         form = UserAddressForm(request.POST, pass_type = request.POST['pass_type'], starting_from = request.POST['user_address'])
 
+
         if form.is_valid():
             resorts_list = process_form(request, form)
             return render(request, 'resorthub/compare_options.html', {'resorts_list': resorts_list})
@@ -62,7 +63,7 @@ def index(request):
         resorts_list = get_resort_list(resorts_list, order_on = 'snow_in_past_24h')
         form = UserAddressForm(pass_type = pass_type, starting_from=address)
  
-        return render(request, 'resorthub/index.html', {'form': form, 'header_message': header_message, 'supported_resorts': resorts_list})
+        return render(request, 'resorthub/index.html', {'form': form, 'header_message': header_message, 'resorts_list': resorts_list})
 
 
 def process_form(request, form):
@@ -120,7 +121,7 @@ def resort_listing(request):
         #Until we can find a way to make this work on heroku, use Boston as a start.
                     starting_address = "Boston MA"
 
-                resorts_list = get_resort_list(selected_resorts, user_address = starting_address, number_to_display = len(selected_resorts))
+                resorts_list = get_resort_list(selected_resorts, user_address = starting_address, number_to_display = len(selected_resorts), order_on='distance')
 
                 return render(request, 'resorthub/compare.html', {'resorts_list': resorts_list})
  
@@ -135,7 +136,7 @@ def resort_listing(request):
                 return redirect("/usersettings/profile/")
                 
     else:
-        resort_list = OldResort.objects.order_by('name')
+        resorts_list = OldResort.objects.order_by('name')
         return render(request, 'resorthub/resorts.html', {'resorts_list': resorts_list})
 
 
