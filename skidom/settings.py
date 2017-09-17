@@ -82,8 +82,6 @@ WSGI_APPLICATION = 'skidom.wsgi.application'
 
 DATABASES = {
     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3', 
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'skidom',
         'USER': 'postgres',
@@ -139,23 +137,23 @@ STATIC_ROOT = BASE_DIR
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
-#Login redirect
+# Login redirect
 # Redirect to home URL after login (Default redirects to /accounts/profile/)
 LOGIN_REDIRECT_URL = '/resorthub/'
 
-#We can't send emails yet...
+# We can't send emails yet...
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-#Geoip path!
+# Geoip path for local use.
+#This is not currently functional in our heroku code.
 GEOIP_PATH = os.path.join(BASE_DIR, 'static/geoip_city')
-MAXMIND_KEY = '8675309'
 
-#Database config for heroku deployment
+# Database config for heroku deployment
 import dj_database_url
 
 db_from_env = dj_database_url.config()
 DATABASES['default'].update(db_from_env)
 
-#Heroku static file serving
+# Heroku static file serving
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
