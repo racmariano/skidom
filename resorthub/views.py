@@ -43,7 +43,12 @@ def index(request):
         if form.is_valid():
             if form.cleaned_data['user_address'] not in ["", "Let\'s go!"]:
                 resorts_list = process_form(form)
-                return render(request, 'resorthub/compare_options.html', {'resorts_list': resorts_list})
+                if resorts_list:
+                    return render(request, 'resorthub/compare_options.html', {'resorts_list': resorts_list})
+                else:
+                    messages.warning(request, "No resorts matching criteria found. Please try again!")
+                    return redirect('/resorthub/')
+                
 
             else:
                 messages.warning(request, "Please enter valid address!")
