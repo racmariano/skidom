@@ -1,0 +1,12 @@
+django_dynamic_scraper==0.13.0
+django_multiselectfield==0.1.7
+django-widget-tweaks==1.4.1
+scrapy_djangoitem==1.1.1
+googlemaps==2.4.6
+django_address==0.1.5
+Django==1.11.1
+Scrapy==1.4.0
+gunicorn==19.7.1
+dj-database-url==0.4.2
+whitenoise==3.3.0
+psycopg2==2.7.3.1

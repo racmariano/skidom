@@ -16,7 +16,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 
 #Libraries for distance/time estimates
-from django.contrib.gis.geoip2 import GeoIP2
 import googlemaps
 import json
 
@@ -37,15 +36,7 @@ def resort_listing(request):
                 if request.user.is_authenticated() and request.user.address != "":
                     starting_address = request.user.address
                 else:
-                    g = GeoIP2()
-                    ip = request.META.get('REMOTE_ADDR', None)
-
-                    if ip:
-                        try:
-                            geoip_city = g.city(ip)
-                            starting_address = geoip_city['city']
-                        except:
-                            starting_address = "Boston MA"
+                    starting_address = "Boston MA"
 
                 resort_addresses = [x.address.raw for x in selected_resorts] 
                 clean_dists, clean_times = use_googlemaps(starting_address, resort_addresses)
@@ -89,23 +80,6 @@ def get_top_five_resorts(resort_list, filter_on='num_open'):
         end = len(resort_list)
 
     return(zip(*resort_info[0:end]))
-
-def get_scraped_info(resort_list):
-    trail_pages = []
-    valid_resorts = []
-
-    for resort in resort_list:
-        try:
-            trail_pages.append(TrailPage.objects.get(resort=resort))
-            valid_resorts.append(resort)
-        except ObjectDoesNotExist:
-            pass
-
-    base_temps = [str(int(t.base_temp))+"° F" for t in trail_pages]
-    num_open = [t.num_open for t in  trail_pages]
-    new_snow =  [t.new_snow for t in trail_pages]
-
-    return(valid_resorts, base_temps, num_open, new_snow)
 
 def index(request):
     resort_list = OldResort.objects.all() 
@@ -165,26 +139,6 @@ def process_form(request, form, resort_list):
 
     return({'form': form, 'address': address, 'date': date, 'supported_resorts': ordered_resorts, 'distances': ordered_dists, 'times': ordered_times, 'base_temps': ordered_temps, 'trails_open':ordered_open, 'new_snow':ordered_snow,})
 
-
-
-def use_googlemaps(address, resort_addresses):
-    json_map_dists = gmaps.distance_matrix(origins = address, destinations = resort_addresses, mode = "driving", units = "imperial")
-
- 
-    clean_map_dists = []
-    clean_map_times = [] 
-
-    try: 
-        for i in range(0, len(resort_addresses)):
-            
-            dist = json_map_dists['rows'][0]['elements'][i]['distance']['text'][:-3].replace(',', '')
-            clean_map_dists.append(float(dist)) 
-            clean_map_times.append(json_map_dists['rows'][0]['elements'][i]['duration']['text']) 
-    
-    except KeyError:
-         return([], [])
-
-    return(clean_map_dists, clean_map_times)
 
 def order_resorts(sort_opt, filtered_resort_list, clean_dists, clean_times):
     filtered_resort_list, base_temps, num_open, new_snow = get_scraped_info(filtered_resort_list)
