@@ -6,15 +6,12 @@ from .models import UserProfile, OldResort
 
 import datetime
 
-class UserAddressForm(forms.Form):
-    """
-    Makes user data entry form for index. Gets location and date of trip.
-    """
-
+class TripInformationForm(forms.Form):
+    """ Gets user trip information on home page."""
     def __init__(self, *args, **kwargs):
         starting_from = kwargs.pop('starting_from')
         pass_type = kwargs.pop('pass_type')
-        super(UserAddressForm, self).__init__(*args, **kwargs)
+        super(TripInformationForm, self).__init__(*args, **kwargs)
         self.fields['user_address'].initial = starting_from
         self.fields['pass_type'].initial = pass_type 
 
@@ -27,12 +24,12 @@ class UserAddressForm(forms.Form):
                     ("POW", "Powder Alliance Pass"),
                     ("ROC", "Rocky Mountain Super Pass"))
 
-    SORT_OPTIONS = (("ABC", "Name"),
-                    ("DIS", "Shortest distance"),
-                    ("TIM", "Shortest time"),
-                    ("SNO", "Most fresh snow"),
-                    ("TRA", "Most trails open"),
-                    ("WEA", "Warmest base"),
+    SORT_OPTIONS = (('name', "Name"),
+                    ('distance', "Shortest distance"),
+                    ('time_in_seconds', "Shortest time"),
+                    ('snow_in_past_24h', "Most fresh snow"),
+                    ('num_trails_open', "Most trails open"),
+                    ('base_temp', "Warmest base"),
                     )
 
     user_address = forms.CharField(label = "Starting address", max_length = 200)
