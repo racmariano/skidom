@@ -36,7 +36,7 @@
 
             {% for resort in resorts_list %}
                 <tr>
-                    <td class="name"><a href="{{ resort.website }}">{{ resort.name  }}</a></td>
+                    <td class="name"><a href="{{ resort.web_home }}">{{ resort.name  }}</a></td>
                     <td class="twohun">{{  resort.state }}</td>
                     <td class="general">{{ resort.base_temp }}</td>
                     <td class="general">{{ resort.num_trails_open  }}</td>
