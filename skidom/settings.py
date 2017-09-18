@@ -25,7 +25,9 @@ SECRET_KEY = 'zm6*g8t&i89&6x73tgan@na%^pu9p83jn8$m9pk(#j9j1%g_3i'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['skidom.herokuapp.com']
+ALLOWED_HOSTS = ['skidom.herokuapp.com',
+                 'localhost',
+                ]
 
 
 # Application definition
@@ -43,7 +45,6 @@ INSTALLED_APPS = [
     'multiselectfield',
     'address',
     'dynamic_scraper',
-    'widget_tweaks'
 ]
 
 MIDDLEWARE = [

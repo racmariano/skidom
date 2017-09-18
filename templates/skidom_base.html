@@ -16,12 +16,14 @@
 
     <span class ="link"><a href="{% url 'resorthub:resorts' %}">Resorts</a></span>      
     <span class ="link"><a href="{% url 'resorthub:index' %}"> Home </a></span>
-</div>
-{% if messages %}
-  {% for message in messages %}
-      <li> {{ message }} </li>
-  {% endfor %}
-{% endif %}
 
+    {% if messages %}
+        {% for message in messages %}
+           <h3> {{ message }} </h3> <br>
+        {% endfor %}
+    {% endif %}
+
+
+</div>
 {% block content %}
 {% endblock %}

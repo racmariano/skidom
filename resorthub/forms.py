@@ -27,12 +27,12 @@ class UserAddressForm(forms.Form):
                     ("POW", "Powder Alliance Pass"),
                     ("ROC", "Rocky Mountain Super Pass"))
 
-    SORT_OPTIONS = (("ABC", "Name"),
-                    ("DIS", "Shortest distance"),
-                    ("TIM", "Shortest time"),
-                    ("SNO", "Most fresh snow"),
-                    ("TRA", "Most trails open"),
-                    ("WEA", "Warmest base"),
+    SORT_OPTIONS = (('name', "Name"),
+                    ('distance', "Shortest distance"),
+                    ('time_in_seconds', "Shortest time"),
+                    ('snow_in_past_24h', "Most fresh snow"),
+                    ('num_trails_open', "Most trails open"),
+                    ('base_temp', "Warmest base"),
                     )
 
     user_address = forms.CharField(label = "Starting address", max_length = 200)

@@ -1,7 +1,5 @@
 {% extends "skidom_base.html" %}
 {% load static %}
-{% load resort_filters %}
-{% load widget_tweaks %}
 
 {% block content %}
 <div class ="supres">
@@ -16,13 +14,13 @@
                 </tr>
         </thead>
         <tbody>
-        {% for resort in resorts %}
+        {% for resort in resorts_list %}
             <tr>
                 <td class="name">{{ resort.name }}</td>
-                <td class="general"> {{ resort.address.locality.state.name }} </td>
-                <td class="general"><a href="{{ resort.web_home }}">Here</a></td>
-                <td class="onehun">{{ distances|use_index:forloop.counter0  }}</td>
-                <td class="general">{{ times|use_index:forloop.counter0 }}</td>
+                <td class="general"> {{ resort.state }} </td>
+                <td class="general"><a href="{{ resort.website }}">Here</a></td>
+                <td class="onehun">{{ resort.distance  }}</td>
+                <td class="general">{{ resort.text_time }}</td>
             </tr>    
         {% endfor %}
         </tbody>
