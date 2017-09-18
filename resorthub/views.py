@@ -19,6 +19,9 @@ from resorts.views.resort_list import get_resort_list
 # Import GeoIP2 for location guessing
 from django.contrib.gis.geoip2 import GeoIP2
 
+# Useful constants
+DEFAULT_ADDRESS_FILL_IN = 'Let\'s go!'
+
 def index(request):
     """ Home page for Skidom.
 
@@ -44,7 +47,7 @@ def index(request):
         form = TripInformationForm(request.POST, pass_type = request.POST['pass_type'], starting_from = request.POST['user_address'])
 
         if form.is_valid():
-            if form.cleaned_data['user_address'] not in ["", "Let\'s go!"]:
+            if form.cleaned_data['user_address'] not in [None, "", DEFAULT_ADDRESS_FILL_IN]:
                 resorts_list = process_form(form)
                 if resorts_list:
                     return render(request, 'resorthub/compare.html', {'resorts_list': resorts_list})
@@ -59,17 +62,19 @@ def index(request):
 
     else:
         header_message = "Where we\'d ski this weekend:"
+        address = DEFAULT_ADDRESS_FILL_IN
+        pass_type = "NON"
 
         if request.user.is_authenticated():
-            address = request.user.address
+            try:
+                address = request.user.address.formatted
+            except:
+                pass
+
             pass_type = request.user.pass_type            
             if len(request.user.favorite_resorts.all()) > 0:
                 header_message = "What\'s up with your favorite resorts:"
                 resorts_list = request.user.favorite_resorts.all()
-
-        else:
-            address = 'Let\'s go!'
-            pass_type = "NON"
 
         resorts_list = get_resort_list(resorts_list, order_on = 'snow_in_past_24h')
         form = TripInformationForm(pass_type = pass_type, starting_from=address)
