@@ -27,7 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['skidom.herokuapp.com',
                  'localhost',
-                ]
+]
 
 
 # Application definition
@@ -74,14 +74,6 @@ TEMPLATES = [
         },
     },
 ]
-
-TEMPLATE_CONTEXT_PROCESSORS = (
-    "django.core.context_processors.auth",
-    "django.core.context_processors.debug",
-    "django.core.context_processors.i18n",
-    "django.core.context_processors.media",
-    "django.core.context_processors.request",
-)
 
 LOGIN_REDIRECT_URL = "/usersettings/profile"
 
@@ -147,7 +139,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
-    ]
+]
 
 # We can't send emails yet...
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
@@ -164,4 +156,3 @@ DATABASES['default'].update(db_from_env)
 
 # Heroku static file serving
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
-
