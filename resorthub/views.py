@@ -16,6 +16,9 @@ from .forms import TripInformationForm, CompareOrFavoriteForm
 # Import get_resort_list function for resort display
 from resorts.views.resort_list import get_resort_list
 
+# Import GeoIP2 for location guessing
+from django.contrib.gis.geoip2 import GeoIP2
+
 def index(request):
     """ Home page for Skidom.
 
@@ -120,13 +123,17 @@ def resort_listing(request):
         selected_resorts = OldResort.objects.filter(pk__in=selected_resort_ids)
 
         if ("compare" in request.POST.keys()):
-                if request.user.is_authenticated() and request.user.address != "":
+                if request.user.is_authenticated() and request.user.address != None:
                     starting_address = request.user.address.formatted
 
                 else:
-        #We use to have GeoIP2 here to guess the starting address based on the user's IP.
-        #Until we can find a way to make this work on heroku, use Boston as a start.
-                    starting_address = "Boston MA"
+        #We use GeoIP2 here to guess the starting address based on the user's IP.
+                    g = GeoIP2()
+                    ip = request.META['REMOTE_ADDR']
+                    try:
+                        starting_address = g.city(ip)['city'] 
+                    except:        
+                        starting_address = "Boston MA" 
 
                 resorts_list = get_resort_list(selected_resorts, user_address = starting_address, number_to_display = len(selected_resorts), order_on='distance')
 
