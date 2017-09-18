@@ -28,7 +28,7 @@ def index(request):
     Renders matching resorts and information to comparison template.
 
     Args:
-        request: Page request.
+        request (request): Page request.
 
     Returns:
         render: Renders valid resorts and info to comparison template
@@ -51,7 +51,7 @@ def index(request):
                 
 
             else:
-                messages.warning(request, "Please enter valid address!")
+                messages.warning(request, "Please enter a valid address!")
                 return redirect('/')
 
     else:
@@ -112,7 +112,7 @@ def resort_listing(request):
         request (request): Page request
 
     Returns:
-        redirect or render based on criteria above. 
+        Redirect or render based on criteria above. 
 
     """
     if request.method == 'POST':
@@ -151,8 +151,8 @@ def compare_listing(request, resorts_list=[]):
     """ View for comparison page.
 
     Args:
-        request: Page request
-        resorts_list: List of Resort dictionaries
+        request (request): Page request
+        resorts_list (list): List of Resort dictionaries
 
     Returns:
         render: Renders resorts_list to comparison template
