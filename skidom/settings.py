@@ -75,6 +75,16 @@ TEMPLATES = [
     },
 ]
 
+TEMPLATE_CONTEXT_PROCESSORS = (
+    "django.core.context_processors.auth",
+    "django.core.context_processors.debug",
+    "django.core.context_processors.i18n",
+    "django.core.context_processors.media",
+    "django.core.context_processors.request",
+)
+
+LOGIN_REDIRECT_URL = "/usersettings/profile"
+
 WSGI_APPLICATION = 'skidom.wsgi.application'
 
 
@@ -137,10 +147,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
-]
-# Login redirect
-# Redirect to home URL after login (Default redirects to /accounts/profile/)
-LOGIN_REDIRECT_URL = '/resorthub/'
+    ]
 
 # We can't send emails yet...
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

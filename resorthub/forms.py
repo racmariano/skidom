@@ -6,15 +6,12 @@ from .models import UserProfile, OldResort
 
 import datetime
 
-class UserAddressForm(forms.Form):
-    """
-    Makes user data entry form for index. Gets location and date of trip.
-    """
-
+class TripInformationForm(forms.Form):
+    """ Gets user trip information on home page."""
     def __init__(self, *args, **kwargs):
         starting_from = kwargs.pop('starting_from')
         pass_type = kwargs.pop('pass_type')
-        super(UserAddressForm, self).__init__(*args, **kwargs)
+        super(TripInformationForm, self).__init__(*args, **kwargs)
         self.fields['user_address'].initial = starting_from
         self.fields['pass_type'].initial = pass_type 
 

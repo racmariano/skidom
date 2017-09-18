@@ -11,7 +11,7 @@ from django.contrib import messages
 
 # Import Objects
 from .models import OldResort, TrailPage
-from .forms import UserAddressForm, CompareOrFavoriteForm
+from .forms import TripInformationForm, CompareOrFavoriteForm
 
 # Import get_resort_list function for resort display
 from resorts.views.resort_list import get_resort_list
@@ -38,21 +38,21 @@ def index(request):
     resorts_list = OldResort.objects.all() 
 
     if request.method == 'POST':
-        form = UserAddressForm(request.POST, pass_type = request.POST['pass_type'], starting_from = request.POST['user_address'])
+        form = TripInformationForm(request.POST, pass_type = request.POST['pass_type'], starting_from = request.POST['user_address'])
 
         if form.is_valid():
             if form.cleaned_data['user_address'] not in ["", "Let\'s go!"]:
                 resorts_list = process_form(form)
                 if resorts_list:
-                    return render(request, 'resorthub/compare_options.html', {'resorts_list': resorts_list})
+                    return render(request, 'resorthub/compare.html', {'resorts_list': resorts_list})
                 else:
                     messages.warning(request, "No resorts matching criteria found. Please try again!")
-                    return redirect('/resorthub/')
+                    return redirect('/')
                 
 
             else:
                 messages.warning(request, "Please enter valid address!")
-                return redirect('/resorthub/')
+                return redirect('/')
 
     else:
         header_message = "Where we\'d ski this weekend:"
@@ -69,7 +69,7 @@ def index(request):
             pass_type = "NON"
 
         resorts_list = get_resort_list(resorts_list, order_on = 'snow_in_past_24h')
-        form = UserAddressForm(pass_type = pass_type, starting_from=address)
+        form = TripInformationForm(pass_type = pass_type, starting_from=address)
         return render(request, 'resorthub/index.html', {'form': form, 'header_message': header_message, 'resorts_list': resorts_list})
 
 
@@ -121,7 +121,7 @@ def resort_listing(request):
 
         if ("compare" in request.POST.keys()):
                 if request.user.is_authenticated() and request.user.address != "":
-                    starting_address = request.user.address
+                    starting_address = request.user.address.formatted
 
                 else:
         #We use to have GeoIP2 here to guess the starting address based on the user's IP.
