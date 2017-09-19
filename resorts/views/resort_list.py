@@ -63,9 +63,13 @@ def queryset_to_resort_dictionary(selected_resorts):
 
     for resort in resorts_list:
         resort_object = selected_resorts.get(pk=resort['id'])
-        resort['state'] = resort_object.address.locality.state.name
-        resort['address'] = resort_object.address.formatted
         resort['our_take'] = resort_object.our_take
+
+        try:
+            resort['state'] = resort_object.address.locality.state.name
+            resort['address'] = resort_object.address.formatted
+        except:
+            resort['address'] = resort_object.address.raw           
 
     return(resorts_list)
 
