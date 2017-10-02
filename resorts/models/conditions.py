@@ -18,6 +18,8 @@ class Conditions(models.Model):
     summit_temp = models.DecimalField(max_digits = 6, decimal_places = 2, default = 0)
     wind_speed = models.DecimalField(max_digits = 6, decimal_places = 2, default = 0)
     base_depth = models.DecimalField(max_digits = 6, decimal_places = 2, default = 0)
+    num_trails_open = models.IntegerField(default = 0)
+    new_snow_24_hr = models.IntegerField(default = 0)
     #past_n_day_snowfall = ArrayField(models.DecimalField(max_digits = 6, decimal_places = 2, default = 0), size = 15)
     #past_n_day_wind_speed = ArrayField(models.DecimalField(max_digits = 6, decimal_places = 2, default = 0), size = 15)
     #future_n_day_snowfall = ArrayField(models.DecimalField(max_digits = 6, decimal_places = 2, default = 0), size = 15)
