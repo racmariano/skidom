@@ -12,6 +12,7 @@ class Resort(models.Model):
     name = models.CharField(max_length=50, default = '')
     address = AddressField(blank = True)
     website = models.URLField(default = '')
+    condtions_page_url = models.URLField()
 
     # Prices for lift and rentals
     adult_lift_ticket = models.DecimalField(max_digits = 6, decimal_places = 2, default = 0)

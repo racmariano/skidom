@@ -14,18 +14,18 @@ import os
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "skidom.settings")
 
-BOT_NAME = 'resorthub'
+BOT_NAME = 'conditionscraper'
 
-SPIDER_MODULES = ['dynamic_scraper.spiders', 'resorthub.scraper']
+SPIDER_MODULES = ['dynamic_scraper.spiders', 'scraper']
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-USER_AGENT = BOT_NAME+'_side_project_1.0'
+USER_AGENT = BOT_NAME+'_skidom'
 
 # Configure item pipelines
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
 
 ITEM_PIPELINES = {
-    'resorthub.scraper.pipelines.UpdateOrCreatePipeline': 400,
+    'scraper.pipelines.UpdateOrCreatePipeline': 400,
     'dynamic_scraper.pipelines.ValidationPipeline': 800,
 }
 
@@ -33,7 +33,7 @@ ITEM_PIPELINES = {
 # Additional settings provided
 
 
-#NEWSPIDER_MODULE = 'TrailsOpenScraper.spiders'
+#NEWSPIDER_MODULE = 'ConditionsScraper.spiders'
 
 # Obey robots.txt rules
 #ROBOTSTXT_OBEY = True
@@ -64,13 +64,13 @@ ITEM_PIPELINES = {
 # Enable or disable spider middlewares
 # See http://scrapy.readthedocs.org/en/latest/topics/spider-middleware.html
 #SPIDER_MIDDLEWARES = {
-#    'TrailsOpenScraper.middlewares.TrailsopenscraperSpiderMiddleware': 543,
+#    'ConditionsScraper.middlewares.ConditionsSpiderMiddleware': 543,
 #}
 
 # Enable or disable downloader middlewares
 # See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
 #DOWNLOADER_MIDDLEWARES = {
-#    'TrailsOpenScraper.middlewares.MyCustomDownloaderMiddleware': 543,
+#    'ConditionsScraper.middlewares.MyCustomDownloaderMiddleware': 543,
 #}
 
 # Enable or disable extensions

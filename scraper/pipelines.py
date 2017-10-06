@@ -4,17 +4,17 @@ from django.forms import model_to_dict
 from scrapy.exceptions import DropItem
 from dynamic_scraper.models import SchedulerRuntime
 
-#Helper methods
+# Helper methods
 def get_or_create(item, spider, crawled_url):
     model_class = getattr(item, 'django_model')
     exists = True
 
     try:
-        obj = model_class.objects.get(url=crawled_url)
+        obj = model_class.objects.get(conditions_page_url=crawled_url)
     except model_class.DoesNotExist:
         exists = False
         item['resort'] = spider.ref_object
-        item['url'] = spider.scrape_url
+        item['conditions_page_url'] = spider.scrape_url
         obj = item
 
     return (obj, exists)
@@ -47,9 +47,9 @@ class UpdateOrCreatePipeline(object):
 
         if item.is_valid():    
             crawled_url = spider.start_urls[0]
-            obj, trailpage_exists = get_or_create(item, spider, crawled_url)
+            obj, conditions_exists = get_or_create(item, spider, crawled_url)
             
-            if not trailpage_exists:
+            if not conditions_exists:
             #If doesn't exist, create toy instance and overwrite in update
                 item = obj
                 obj = item.instance            
