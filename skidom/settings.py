@@ -158,6 +158,15 @@ DATABASES['default'].update(db_from_env)
 # Heroku static file serving
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
-# Celery for automatically scraping condition pages
+# Celery+DDS for automatically scraping condition pages
+# Following https://django-dynamic-scraper.readthedocs.io/en/latest/advanced_topics.html#scheduling-scrapers-checkers
+
 import djcelery
 djcelery.setup_loader()
+BROKER_HOST = "localhost"
+BROKER_PORT = 5672
+BROKER_BACKEND = "django"
+BROKER_USER = "guest"
+BROKER_PASSWORD = "guest"
+BROKER_VHOST = "/"
+CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
