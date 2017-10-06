@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'multiselectfield',
     'address',
     'dynamic_scraper',
+    'djcelery',
 ]
 
 MIDDLEWARE = [
@@ -156,3 +157,7 @@ DATABASES['default'].update(db_from_env)
 
 # Heroku static file serving
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+
+# Celery for automatically scraping condition pages
+import djcelery
+djcelery.setup_loader()
