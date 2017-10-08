@@ -4,6 +4,8 @@ from __future__ import unicode_literals
 from django.db import models
 
 from address.models import AddressField
+from dynamic_scraper.models import Scraper, SchedulerRuntime
+from scrapy_djangoitem import DjangoItem
 
 # Basic resort model
 class Resort(models.Model):
@@ -12,7 +14,6 @@ class Resort(models.Model):
     name = models.CharField(max_length=50, default = '')
     address = AddressField(blank = True)
     website = models.URLField(default = '')
-    condtions_page_url = models.URLField()
 
     # Prices for lift and rentals
     adult_lift_ticket = models.DecimalField(max_digits = 6, decimal_places = 2, default = 0)
@@ -31,6 +32,14 @@ class Resort(models.Model):
 
     # Short 'our take' description
     our_take = models.CharField(max_length = 1000, default = "This resort is great! Yay, skiing!")
+
+
+    # Fields for scraper support 
+    conditions_page_url = models.URLField(blank = True)
+    scraper = models.ForeignKey(Scraper, blank = True, null = True, on_delete = models.SET_NULL)
+    scraper_runtime = models.ForeignKey(SchedulerRuntime, blank = True, null = True, on_delete = models.SET_NULL)
+
+
 
     def __str__(self):
         return self.name
