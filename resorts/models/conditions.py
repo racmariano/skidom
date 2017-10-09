@@ -32,17 +32,21 @@ class Conditions(models.Model):
     #future_n_day_snowfall = ArrayField(models.DecimalField(max_digits = 6, decimal_places = 2, default = 0), size = 15)
     #future_n_day_wind_speed = ArrayField(models.DecimalField(max_digits = 6, decimal_places = 2, default = 0), size = 15)
 
+    # For database querying
+    unique_id = models.CharField(default='', max_length = 200)
 
     def __init__(self, *args, **kwargs):
         super(Conditions, self).__init__(*args, **kwargs)
         if not self.id:
+            day = datetime.date.today
             self.conditions_page_url = self.resort.conditions_page_url
+            self.unique_id = self.resort.name+str(datetime.date.today())
 
     def __unicode__(self):
-        return self.resort.name+(" Scraper")
+        return self.resort.name+": "+str(self.date)
 
     def __str__(self):
-        return self.resort.name+(" Scraper")
+        return self.resort.name+": "+str(self.date)
 
     class Meta:
         verbose_name_plural = "Conditions"

@@ -24,9 +24,10 @@ USER_AGENT = BOT_NAME+'_skidom'
 # Configure item pipelines
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
 
-ITEM_PIPELINES = {
-    'scraper.pipelines.UpdateOrCreatePipeline': 400,
-    'dynamic_scraper.pipelines.ValidationPipeline': 800,
+ITEM_PIPELINES = { 
+    'dynamic_scraper.pipelines.ValidationPipeline': 400,
+    'scraper.pipelines.UpdateOrCreatePipeline': 800,
+
 }
 
 
