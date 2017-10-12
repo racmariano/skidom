@@ -12,4 +12,7 @@ class SkiPass(models.Model):
 
     class Meta:
         verbose_name_plural = "Ski passes"
+
+    def __str__(self):
+        return self.name
      
