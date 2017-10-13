@@ -9,12 +9,12 @@ from django.urls import reverse
 from django.views import generic, View
 from django.contrib import messages  
 
-# Import Objects
-from .models import OldResort, TrailPage
+# Import Models
 from .forms import TripInformationForm, CompareOrFavoriteForm
+from resorts.models import Resort, SkiPass
 
-# Import get_resort_list function for resort display
-from resorts.views.resort_list import get_resort_list
+# Import Views
+from resorts.views import resorts_table
 
 # Import GeoIP2 for location guessing
 from django.contrib.gis.geoip2 import GeoIP2
@@ -41,16 +41,16 @@ def index(request):
                 if successful. Else, reloads the page.
     
     """
-    resorts_list = OldResort.objects.all() 
+    resorts = Resort.objects.all() 
 
     if request.method == 'POST':
-        form = TripInformationForm(request.POST, pass_type = request.POST['pass_type'], starting_from = request.POST['user_address'])
+        form = TripInformationForm(request.POST, pass_id = request.POST['pass_id'], starting_from = request.POST['user_address'])
 
         if form.is_valid():
-            if form.cleaned_data['user_address'] not in [None, "", DEFAULT_ADDRESS_FILL_IN]:
-                resorts_list = process_form(form)
-                if resorts_list:
-                    return render(request, 'resorthub/compare.html', {'resorts_list': resorts_list})
+            if form.cleaned_data['user_address'] not in ["", "Let\'s go!"]:
+                resorts = process_form(form)
+                if resorts:
+                    return render(request, 'resorthub/compare.html', {'resorts_list': resorts})
                 else:
                     messages.warning(request, "No resorts matching criteria found. Please try again!")
                     return redirect('/')
@@ -62,23 +62,21 @@ def index(request):
 
     else:
         header_message = "Where we\'d ski this weekend:"
-        address = DEFAULT_ADDRESS_FILL_IN
-        pass_type = "NON"
 
         if request.user.is_authenticated():
-            try:
-                address = request.user.address.formatted
-            except:
-                pass
+            address = request.user.address
+            pass_id = request.user.pass_id            
+            #if len(request.user.favorite_resorts.objects()) > 0:
+            #    header_message = "What\'s up with your favorite resorts:"
+            #    resorts = request.user.favorite_resorts.all()
 
-            pass_type = request.user.pass_type            
-            if len(request.user.favorite_resorts.all()) > 0:
-                header_message = "What\'s up with your favorite resorts:"
-                resorts_list = request.user.favorite_resorts.all()
+        else:
+            address = 'Let\'s go!'
+            pass_id = None
 
-        resorts_list = get_resort_list(resorts_list, order_on = 'snow_in_past_24h')
-        form = TripInformationForm(pass_type = pass_type, starting_from=address)
-        return render(request, 'resorthub/index.html', {'form': form, 'header_message': header_message, 'resorts_list': resorts_list})
+        table = resorts_table(resorts, order_on = 'new_snow_24_hr')
+        form = TripInformationForm(pass_id = pass_id, starting_from=address)
+        return render(request, 'resorthub/index.html', {'form': form, 'header_message': header_message, 'resorts_list': table})
 
 
 def process_form(form):
@@ -93,15 +91,14 @@ def process_form(form):
 
     """
     address = form.cleaned_data['user_address']
-    pass_info = form.cleaned_data['pass_type'][0]
-    sort_opt = form.cleaned_data['sort_opt']
+    pass_id = form.cleaned_data['pass_id']
 
-    filtered_resort_list = OldResort.objects.filter(available_passes__contains=pass_info)
-
-    if not filtered_resort_list:
-        return([])
-
-    return(get_resort_list(filtered_resort_list, user_address = address, number_to_display = len(filtered_resort_list), order_on = sort_opt))
+    if pass_id:
+        resorts = SkiPass.objects.get(name=pass_id).resorts.all()
+    else:
+        resorts = Resorts.objects.all()
+    
+    return(resorts_table(resorts, user_address = address, number_to_display = len(resorts)))
 
 
 def resort_listing(request):
@@ -125,7 +122,7 @@ def resort_listing(request):
     """
     if request.method == 'POST':
         selected_resort_ids = request.POST.getlist('choices[]')
-        selected_resorts = OldResort.objects.filter(pk__in=selected_resort_ids)
+        selected_resorts = Resort.objects.filter(pk__in=selected_resort_ids)
 
         if ("compare" in request.POST.keys()):
                 if request.user.is_authenticated() and request.user.address != None:
@@ -155,7 +152,7 @@ def resort_listing(request):
                 return redirect("/usersettings/profile/")
                 
     else:
-        resorts_objects_list = OldResort.objects.order_by('name')
+        resorts_objects_list = Resort.objects.order_by('name')
         return render(request, 'resorthub/resorts.html', {'resorts_list': resorts_objects_list})
 
 
@@ -171,4 +168,3 @@ def compare_listing(request, resorts_list=[]):
 
     """
     return render(request, 'resorthub/compare.html', {'resorts_list': resorts_list})
-
