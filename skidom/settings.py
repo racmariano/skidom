@@ -38,13 +38,15 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
     'resorthub.apps.ResorthubConfig',
     'usersettings.apps.UsersettingsConfig',
     'resorts.apps.ResortsConfig',
     'multiselectfield',
     'address',
     'dynamic_scraper',
+    'djkombu',
+    'django_celery_beat',
+    'django_celery_results',
 ]
 
 MIDDLEWARE = [
@@ -156,3 +158,17 @@ DATABASES['default'].update(db_from_env)
 
 # Heroku static file serving
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+
+# Celery+DDS for automatically scraping condition pages
+# Following https://django-dynamic-scraper.readthedocs.io/en/latest/advanced_topics.html#scheduling-scrapers-checkers
+
+
+CELERY_BROKER_URL = 'amqp://skidom:weloveski@localhost:5672/skidom_vhost'
+CELERY_RESULT_BACKEND = 'amqp://localhost'
+
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_ACCEPT_CONTENT=['json']
+CELERY_TIMEZONE = TIME_ZONE
+CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
+

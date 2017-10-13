@@ -19,6 +19,9 @@ from resorts.views import resorts_table
 # Import GeoIP2 for location guessing
 from django.contrib.gis.geoip2 import GeoIP2
 
+# Useful constants
+DEFAULT_ADDRESS_FILL_IN = 'Let\'s go!'
+
 def index(request):
     """ Home page for Skidom.
 
