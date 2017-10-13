@@ -8,7 +8,7 @@
 import scrapy
 
 
-class TrailsopenscraperItem(scrapy.Item):
+class ConditionsScraperItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
     pass

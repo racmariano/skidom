@@ -25,7 +25,9 @@ SECRET_KEY = 'zm6*g8t&i89&6x73tgan@na%^pu9p83jn8$m9pk(#j9j1%g_3i'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['skidom.herokuapp.com',
+                 'localhost',
+]
 
 
 # Application definition
@@ -36,15 +38,15 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'django.contrib.gis.geoip2',
     'resorthub.apps.ResorthubConfig',
     'usersettings.apps.UsersettingsConfig',
     'resorts.apps.ResortsConfig',
     'multiselectfield',
     'address',
     'dynamic_scraper',
-    'widget_tweaks'
+    'djkombu',
+    'django_celery_beat',
+    'django_celery_results',
 ]
 
 MIDDLEWARE = [
@@ -75,6 +77,8 @@ TEMPLATES = [
     },
 ]
 
+LOGIN_REDIRECT_URL = "/usersettings/profile"
+
 WSGI_APPLICATION = 'skidom.wsgi.application'
 
 
@@ -83,8 +87,6 @@ WSGI_APPLICATION = 'skidom.wsgi.application'
 
 DATABASES = {
     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3', 
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'skidom',
         'USER': 'postgres',
@@ -140,21 +142,33 @@ STATIC_ROOT = BASE_DIR
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
-#Login redirect
-# Redirect to home URL after login (Default redirects to /accounts/profile/)
-LOGIN_REDIRECT_URL = '/resorthub/'
 
-#We can't send emails yet...
+# We can't send emails yet...
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-#Geoip path!
+# Geoip path for local use.
+#This is not currently functional in our heroku code.
 GEOIP_PATH = os.path.join(BASE_DIR, 'static/geoip_city')
 
-#Database config for heroku deployment
+# Database config for heroku deployment
 import dj_database_url
 
 db_from_env = dj_database_url.config()
 DATABASES['default'].update(db_from_env)
 
-#Heroku static file serving
+# Heroku static file serving
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+
+# Celery+DDS for automatically scraping condition pages
+# Following https://django-dynamic-scraper.readthedocs.io/en/latest/advanced_topics.html#scheduling-scrapers-checkers
+
+
+CELERY_BROKER_URL = 'amqp://skidom:weloveski@localhost:5672/skidom_vhost'
+CELERY_RESULT_BACKEND = 'amqp://localhost'
+
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_ACCEPT_CONTENT=['json']
+CELERY_TIMEZONE = TIME_ZONE
+CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
+

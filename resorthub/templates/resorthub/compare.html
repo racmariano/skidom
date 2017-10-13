@@ -1,32 +1,41 @@
 {% extends "skidom_base.html" %}
-{% load static %}
-{% load resort_filters %}
-{% load widget_tweaks %}
 
 {% block content %}
-<div class ="supres">
-    <table>
-        <thead>
-                <tr class = "d0">
-                    <th>Name</th>
-                    <th>State</th>
-                    <th>Website</th>
+
+<div class="compareresorts">
+    {% if resorts_list %}
+       <p><h2>Recommended for you:</h2></p>   
+        <table>
+            <thead>
+                <tr class="d0">
+                    <th>Resort</th>
+                    <th>Address</th>
                     <th>Distance</th>
                     <th>Driving Time</th>
-                </tr>
-        </thead>
-        <tbody>
-        {% for resort in resorts %}
-            <tr>
-                <td class="name">{{ resort.name }}</td>
-                <td class="general"> {{ resort.address.locality.state.name }} </td>
-                <td class="general"><a href="{{ resort.web_home }}">Here</a></td>
-                <td class="onehun">{{ distances|use_index:forloop.counter0  }}</td>
-                <td class="general">{{ times|use_index:forloop.counter0 }}</td>
-            </tr>    
-        {% endfor %}
-        </tbody>
-   </table>
+                    <th>Base temp</th>
+                    <th>Trails open</th>
+                    <th>24 hr Snow</th>
+                </tr> 
+            </thead>
+            <tbody>
+                {% for resort in resorts_list %}
+                    <tr>
+                        <td class="general"><a href="{{ resort.website }}">{{ resort.name  }}</a></td>
+                        <td class="address">{{  resort.address }}</td>
+                        <td class="onehun">{{ resort.distance  }}</td>
+                        <td class="general">{{ resort.text_time }}</td>
+                        <td class="onehun">{{ resort.base_temp }}</td>
+                        <td class="onehun">{{ resort.num_trails_open }}</td>
+                        <td class="onehun">{{ resort.snow_in_past_24h }}</td>
+                    </tr> 
+                {% endfor %}
+            </tbody>
+        </table>            
+
+    {% else %}
+        <p>No resorts match your criteria. Please try again!</p>
+
+    {% endif %}
 </div>
 
 {% endblock %}

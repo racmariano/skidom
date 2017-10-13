@@ -16,7 +16,7 @@
                 <th>Select</th>
             </tr>
         <theader>
-        {% for resort in resorts %}
+        {% for resort in resorts_list %}
             <tr>
                 <td class="name"><a href="{{ resort.web_home }}">{{ resort.name }}</a></td>
                 <td class="general"> {{ resort.address.locality.state.name }} </td>

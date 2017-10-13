@@ -1,6 +1,6 @@
 from __future__ import unicode_literals
 
-#General imports
+# General imports
 import re
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
@@ -8,24 +8,38 @@ from django.urls import reverse
 from django.views import generic, View
 from django.contrib import messages
 
-#Libraries for user support
+# Libraries for user support
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.contrib.auth.forms import UserCreationForm
 
+# Relevant models and forms
 from resorthub.models import UserProfile
 from .forms import CustomUserCreationForm, EditProfileForm
 
 
 def signup(request):
+    """ Register account with Skidom.
+
+    Args:
+        request (request): Page request
+
+    Returns:
+        None. 
+        If form is valid, new user added to database and redirected to profile page.
+
+    """
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
 
         if form.is_valid():
-            form.save()
             username = form.cleaned_data['username']
             raw_password = form.cleaned_data['password1']
+            email = form.cleaned_data['email']
+            new_user = UserProfile.objects.create_user(username, email=email, password=raw_password)            
+            new_user.save()
+
             user = authenticate(username = username, password = raw_password)
             login(request, user)
             messages.success(request, "Awesome! Thank you so much for making an account!")
@@ -41,6 +55,16 @@ def signup(request):
 
 @login_required()
 def profile_view(request):
+    """ View and update user profile.
+
+    Args:
+        request (request): Page request
+
+    Returns:
+        None. 
+        If POST, relevant information added to UserProfile object and page refreshes.
+
+    """
     if request.method == 'POST':
         form = EditProfileForm(request.POST, user=request.user, instance=request.user)
 
