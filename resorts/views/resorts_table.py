@@ -8,21 +8,20 @@ from django.core.exceptions import ObjectDoesNotExist
 # Import Resort and Conditions models
 from ..models import Resort, Conditions
 
-# Import TrailPage for testing
-from resorthub.models import TrailPage
-
 # Imports for using Google Maps
 import googlemaps
 import json
+
+import datetime
 
 # Google Maps requires a client key to work
 GMAPS = googlemaps.Client(key='AIzaSyBRrCgnGFkdRY-Z1hX6xaxoUFBczNI2664')
 
 # Constants
 NUMBER_TO_DISPLAY = 5
-DEFAULT_ORDER_ON = 'snow_in_past_24h'
+DEFAULT_ORDER_ON = 'new_snow_24_hr'
 
-def get_resort_list(selected_resorts, user_address = "", number_to_display = NUMBER_TO_DISPLAY, order_on = DEFAULT_ORDER_ON):
+def resorts_table(selected_resorts, user_address = "", number_to_display = NUMBER_TO_DISPLAY, order_on = DEFAULT_ORDER_ON):
     """ Given a queryset of selected resorts, returns an ordered list of resort dictionaries and their conditions for display.
         
     If a user_address is supplied, also returns driving time and distance information.
@@ -38,7 +37,6 @@ def get_resort_list(selected_resorts, user_address = "", number_to_display = NUM
 
     """
     resorts_list = queryset_to_resort_dictionary(selected_resorts)
-
 
     if user_address != "":
         use_googlemaps(user_address, resorts_list)
@@ -59,7 +57,7 @@ def queryset_to_resort_dictionary(selected_resorts):
 
     """
 
-    resorts_list = [x for x in selected_resorts.values('id', 'name', 'web_home')]
+    resorts_list = [x for x in selected_resorts.values('id', 'name', 'website')]
 
     for resort in resorts_list:
         resort_object = selected_resorts.get(pk=resort['id'])
@@ -125,19 +123,21 @@ def get_conditions(resorts_list):
     """
     for resort in resorts_list:
         try:
-            t = TrailPage.objects.get(resort=resort['id'])
+            resort_model = Resort.objects.get(name = resort["name"])
+            t = Conditions.objects.filter(resort = resort_model)
+            t = t.get(date = datetime.date.today())
             base_temp = str(int(t.base_temp))+"° F"
-            num_trails_open = t.num_open
-            snow_in_past_24h = t.new_snow            
+            num_trails_open = t.num_trails_open
+            new_snow_24_hr = t.new_snow_24_hr            
 
         except ObjectDoesNotExist:
             base_temp = None
             num_trails_open = None
-            snow_in_past_24h = None
+            new_snow_24_hr = None
 
         resort['base_temp'] = base_temp
         resort['num_trails_open'] = num_trails_open
-        resort['snow_in_past_24h'] = snow_in_past_24h
+        resort['new_snow_24_hr'] = new_snow_24_hr
 
 
 def order_resorts(resorts_list, number_to_display, order_on):

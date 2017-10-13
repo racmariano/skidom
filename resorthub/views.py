@@ -171,3 +171,4 @@ def compare_listing(request, resorts_list=[]):
 
     """
     return render(request, 'resorthub/compare.html', {'resorts_list': resorts_list})
+
