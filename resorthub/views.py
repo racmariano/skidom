@@ -149,7 +149,7 @@ def resort_listing(request):
                 request.user.favorite_resorts.add(*selected_resorts)
                 request.user.save()
                 messages.success(request, "Resorts added to favorites.")
-                return redirect("/usersettings/profile/")
+                return redirect("/users/profile/")
                 
     else:
         resorts_objects_list = Resort.objects.order_by('name')

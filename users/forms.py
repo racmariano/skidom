@@ -3,7 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 
 from django.contrib.auth.models import User
 
-from resorthub.models import UserProfile
+from .models import UserProfile
 
 class CustomUserCreationForm(UserCreationForm):
     class Meta:

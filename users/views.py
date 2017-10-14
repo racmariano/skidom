@@ -15,7 +15,7 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.forms import UserCreationForm
 
 # Relevant models and forms
-from resorthub.models import UserProfile
+from .models import UserProfile
 from .forms import CustomUserCreationForm, EditProfileForm
 
 
@@ -43,15 +43,15 @@ def signup(request):
             user = authenticate(username = username, password = raw_password)
             login(request, user)
             messages.success(request, "Awesome! Thank you so much for making an account!")
-            return redirect("/usersettings/profile", )
+            return redirect("/users/profile", )
 
         else:
             messages.warning(request, 'There has been an error. Please try again!')
-            return redirect("/usersettings/signup", )
+            return redirect("/users/signup", )
 
     else:
         user_form = CustomUserCreationForm()
-        return render(request, 'usersettings/signup.html', {'user_form': user_form })
+        return render(request, 'users/signup.html', {'user_form': user_form })
 
 @login_required()
 def profile_view(request):
@@ -71,8 +71,8 @@ def profile_view(request):
         if form.is_valid():
             form.save()
             messages.success(request, "Your account was updated successfully.")
-        return redirect("/usersettings/profile", )
+        return redirect("/users/profile", )
 
     else:
         form = EditProfileForm(user=request.user)
-        return render(request, 'usersettings/profile.html', {'form': form})
+        return render(request, 'users/profile.html', {'form': form})
