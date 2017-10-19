@@ -19,7 +19,7 @@ from django.contrib import admin
 
 urlpatterns = [
     url(r'^', include('resorthub.urls')),
-    url(r'^usersettings/', include('usersettings.urls')),
+    url(r'^users/', include('users.urls')),
     url(r'^admin/', admin.site.urls), 
     url(r'^accounts/', include('django.contrib.auth.urls')),
 ]

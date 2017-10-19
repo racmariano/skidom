@@ -3,7 +3,7 @@ from django.views.generic import ListView
 
 from . import views
 
-app_name = 'usersettings'
+app_name = 'users'
 
 urlpatterns = [
     url(r'^profile/$', views.profile_view, name = 'profile'),

@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'resorthub.apps.ResorthubConfig',
-    'usersettings.apps.UsersettingsConfig',
+    'users.apps.usersConfig',
     'resorts.apps.ResortsConfig',
     'multiselectfield',
     'address',
@@ -77,7 +77,7 @@ TEMPLATES = [
     },
 ]
 
-LOGIN_REDIRECT_URL = "/usersettings/profile"
+LOGIN_REDIRECT_URL = "/users/profile"
 
 WSGI_APPLICATION = 'skidom.wsgi.application'
 
@@ -100,9 +100,9 @@ DATABASES = {
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
 
-AUTH_USER_MODEL = 'resorthub.UserProfile'
+AUTH_USER_MODEL = 'users.UserProfile'
 
-AUTH_PROFILE_MODULE = 'resorthub.UserProfile'
+AUTH_PROFILE_MODULE = 'users.UserProfile'
 
 AUTH_PASSWORD_VALIDATORS = [
     {
