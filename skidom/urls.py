@@ -17,9 +17,21 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 
+from django.conf.urls import url, include
+from rest_framework import routers
+
+from resorts.views import ResortViewSet
+
+# Routers provide an easy way of automatically determining the URL conf.
+router = routers.DefaultRouter()
+router.register(r'resorts', ResortViewSet)
+# router.register(r'users', views.UserViewSet)
+
 urlpatterns = [
-    url(r'^', include('resorthub.urls')),
+    url(r'^', include(router.urls)),
+    url(r'^resorthub/', include('resorthub.urls')),
     url(r'^users/', include('users.urls')),
     url(r'^admin/', admin.site.urls), 
     url(r'^accounts/', include('django.contrib.auth.urls')),
+    url(r'^api-auth/', include('rest_framework.urls')),
 ]
