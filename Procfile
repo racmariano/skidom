@@ -1,1 +1,1 @@
-web: gunicorn skidom.wsgi --log-file - 
+web: gunicorn --pythonpath backend skidom.wsgi --log-file - 

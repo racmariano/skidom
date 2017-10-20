@@ -17,9 +17,11 @@ django-celery==3.2.1
 django-celery-beat==1.0.1
 django-celery-results==1.0.1
 django-dynamic-scraper==0.13.0
+django-filter==1.0.4
 django-kombu==0.9.4
 django-multiselectfield==0.1.7
 django-widget-tweaks==1.4.1
+djangorestframework==3.7.1
 enum34==1.1.6
 future==0.15.2
 geoip2==2.5.0
