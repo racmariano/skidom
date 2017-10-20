@@ -28,10 +28,10 @@ router.register(r'resorts', ResortViewSet)
 # router.register(r'users', views.UserViewSet)
 
 urlpatterns = [
-    url(r'^', include(router.urls)),
-    url(r'^resorthub/', include('resorthub.urls')),
+    url(r'^', include('resorthub.urls')),
     url(r'^users/', include('users.urls')),
     url(r'^admin/', admin.site.urls), 
     url(r'^accounts/', include('django.contrib.auth.urls')),
+    url(r'^api/', include(router.urls)),
     url(r'^api-auth/', include('rest_framework.urls')),
 ]
