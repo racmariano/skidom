@@ -16,6 +16,7 @@ Including another URLconf
 
 from django.conf.urls import include, url
 from django.contrib import admin
+from django.views.generic import TemplateView
 
 from django.conf.urls import url, include
 from rest_framework import routers
@@ -28,7 +29,8 @@ router.register(r'resorts', ResortViewSet)
 # router.register(r'users', views.UserViewSet)
 
 urlpatterns = [
-    url(r'^', include('resorthub.urls')),
+    #url(r'^', include('resorthub.urls')),
+    url(r'^', TemplateView.as_view(template_name="index.html")),
     url(r'^users/', include('users.urls')),
     url(r'^admin/', admin.site.urls), 
     url(r'^accounts/', include('django.contrib.auth.urls')),

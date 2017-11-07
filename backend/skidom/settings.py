@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'djkombu',
     'django_celery_beat',
     'django_celery_results',
+    'webpack_loader',
 ]
 
 MIDDLEWARE = [
@@ -67,7 +68,8 @@ ROOT_URLCONF = 'skidom.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['skidom_general/templates', os.path.join(BASE_DIR, 'templates')],
+        #'DIRS': ['skidom_general/templates', os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [os.path.join(BASE_DIR, "templates")],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -181,4 +183,11 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
     ]
+}
+
+WEBPACK_LOADER = {
+    'DEFAULT': {
+        'BUNDLE_DIR_NAME': 'bundles/',
+        'STATS_FILE': os.path.join(BASE_DIR, '../webpack-stats.dev.json'),
+    }
 }
