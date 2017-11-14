@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'resorthub.apps.ResorthubConfig',
     'users.apps.usersConfig',
     'resorts.apps.ResortsConfig',
     'multiselectfield',
@@ -68,7 +67,6 @@ ROOT_URLCONF = 'skidom.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        #'DIRS': ['skidom_general/templates', os.path.join(BASE_DIR, 'templates')],
         'DIRS': [os.path.join(BASE_DIR, "templates")],
         'APP_DIRS': True,
         'OPTIONS': {

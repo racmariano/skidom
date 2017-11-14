@@ -29,7 +29,6 @@ router.register(r'resorts', ResortViewSet)
 # router.register(r'users', views.UserViewSet)
 
 urlpatterns = [
-    #url(r'^', include('resorthub.urls')),
     url(r'^', TemplateView.as_view(template_name="index.html")),
     url(r'^users/', include('users.urls')),
     url(r'^admin/', admin.site.urls), 
