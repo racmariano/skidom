@@ -9,6 +9,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "start-api": "gunicorn --pythonpath backend skidom.wsgi --log-file -",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"

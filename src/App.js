@@ -9,7 +9,7 @@ class App extends Component {
   }
 
   componentWillMount() {
-    fetch('skidom.herokuapp.com/api/resorts')
+    fetch('skidom-api.herokuapp.com/api/resorts')
       .then(response => {
         var contentType = response.headers.get("content-type");
         if(contentType && contentType.includes("application/json")) {
